@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<languages>
+  <language name="Norwegian" id="no">
+    <relations>
+      <admin>
+        <relations>Relations</relations>
+        <relationsadmin>Relations admin</relationsadmin>
+      </admin>
+      <edit>
+        <notallowed>Ikke tillatt</notallowed>
+        <couldnotparse>FEIL: Kunne ikke finne relasjon - {0}</couldnotparse>
+        <removed>Relasjonen ble fjernet</removed>
+        <added>Relasjonen ble opprettet</added>
+        <error>FEIL: </error>
+        <alreadyexists>Relasjonen finnes allerede!</alreadyexists>
+      </edit>
+      <rules>
+        <Subject>Tema</Subject>
+      </rules>
+    </relations>
+  </language>
+</languages>

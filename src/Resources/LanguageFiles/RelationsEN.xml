@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<languages>
+  <language name="English" id="en">
+    <relations>
+      <admin>
+        <relations>Relations</relations>
+        <relationsadmin>Relations admin</relationsadmin>
+      </admin>
+      <edit>
+        <notallowed>Relation is not allowed here!</notallowed>
+        <couldnotparse>ERROR: Could not parse relation - {0}</couldnotparse>
+        <removed>Relation removed successfully</removed>
+        <added>Relation added successfully</added>
+        <error>ERROR: </error>
+        <alreadyexists>The relation already exists!</alreadyexists>
+      </edit>
+    </relations>
+  </language>
+</languages>

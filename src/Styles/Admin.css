@@ -1,0 +1,152 @@
+﻿.ruleContainer
+{
+	background-color: #fff;
+	border: 1px solid #333;
+	overflow: hidden;
+	margin: 10px;
+}
+
+.ruleContainer .ruleHeader
+{
+	background: #555 url(/episerver/Shell/ClientResources/EPi/Shell/Resources/Gradients.png) left -300px repeat-x;
+	padding: 5px;
+	font-weight: bold;
+	color: White;
+}
+
+.ruleContainer .smallPadding
+{
+	padding: 10px;
+}
+
+.ruleContainer .ruleText
+{
+	clear: both;
+	font-weight: bold;
+}
+
+.ruleContainer .ruleTextRight
+{
+	float: right;
+	text-align: right;
+	font-weight: bold;
+}
+
+.ruleContainer .ruleTextLeft
+{
+	float: left;
+}
+
+.buttonRow
+{
+	float: right;
+	clear: both;
+	margin: 10px 0 10px 10px;
+}
+
+.ruleSettings
+{
+	float: left;
+	border: 1px solid #999;
+	float: left;
+	width: 620px;
+	margin: 10px;
+	background-color: #fff;
+}
+
+
+.ruleEditor
+{
+	float: left;
+	border: 1px solid #999;
+	float: left;
+	width: 300px;
+	margin: 10px;
+	background-color: #fff;
+}
+
+.ruleEditorHeader
+{
+	background-color: #575757;
+	color: #fff;
+	font-weight: bold;
+	padding: 4px;
+	height: 16px;
+}
+
+.ruleEditor .marginBottom, .ruleSettings .marginBottom
+{
+	margin-bottom: 10px;
+}
+
+.ruleEditor .smallPadding, .ruleSettings .smallPadding
+{
+	padding: 10px;
+}
+
+.ruleEditorContainer .statusText
+{
+	float: left;
+	width: 300px;
+	clear: both;
+	margin: 10px;
+}
+.ruleEditorContainer .buttonRow .ruleEditorContainer
+{
+	float: left;
+	width: 600px;
+	clear: both;
+	margin: 10px;
+}
+
+.relationValidator
+{
+	padding: 10px 0 10px 0;
+	overflow: hidden;
+}
+
+.validationControl
+{
+	margin: 5px 0px 0px 0px;
+	padding: 3px;
+	border: 1px solid #999;
+	overflow: hidden;
+	background-color: #f9f9f9;
+	color: #333;
+}
+
+.validationControl .validationButtonRow
+{
+	float: left;
+	width: 20px;
+	margin-top: 3px;
+}
+
+.validationControl .validationText
+{
+	float: left;
+	padding: 2px;
+}
+
+.validationControl .validationError
+{
+	float: left;
+	padding: 2px;
+	color: Red;
+}
+
+.statusTextBox
+{
+	width: 700px;
+	background-color: #FFFDBD;
+	height: 200px;
+	margin-bottom: 10px;
+	padding: 5px;
+	border: 1px solid #333;
+	overflow: scroll;
+}
+
+.light 
+{
+	color: #ccc;	
+}

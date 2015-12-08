@@ -1,0 +1,49 @@
+﻿body {
+    background-color: #fff;
+    margin: 0;
+    padding: 0;
+    font-family: Verdana;
+    font-size: 14px;
+}
+
+h1 {
+    padding: 5px 0;
+    margin: 0;
+    color: #fff;
+    font-size: 36px;
+    font-weight: bold;
+    font-family: Verdana;
+}
+
+h1.title {
+    font-size: 36px;
+    padding: 0;
+}
+
+h2 {
+    padding: 5px 0;
+}
+
+.greyarea {
+    background-color: #ebebe6;
+    padding: 10px 0;
+    margin: 0;
+    border-top: 1px solid #808080;
+    border-bottom: 1px solid #808080;
+}
+
+.darkarea {
+    background-color: #2677af;
+    border-bottom: 1px solid #174564;
+    margin: 0;
+    padding: 10px 0;
+    color: #fff;
+    overflow:hidden;
+}
+
+.content {
+    width: 90%;
+    margin: 0px 20px 10px 30px;
+    padding: 15px;
+}
+
