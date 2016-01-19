@@ -93,7 +93,7 @@ namespace EPiCode.Relations.EditorDescriptors
                         cnt++;
                     }
                     */
-                    return Rest(_rules.Select(m => new { Guid = m.RuleGuid, Name = TryTranslate( m.RuleName), Id = m.RuleId, Description = m.RuleDesc, Direction = m.RuleDirection }));
+                    return Rest(_rules.Select(m => new { Guid = m.RuleGuid, Name = TryTranslate( m.RuleName), Id = m.RuleId, Description = TryTranslate(m.RuleDesc), Direction = m.RuleDirection }));
                 }
             }
             return null;

@@ -1,5 +1,4 @@
-﻿using EPiServer.BaseLibrary;
-using EPiServer.ServiceLocation;
+﻿using EPiServer.ServiceLocation;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
