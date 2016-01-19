@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics;
-using log4net;
+
 
 namespace EPiCode.Relations.Diagnostics
 {
@@ -24,7 +24,8 @@ namespace EPiCode.Relations.Diagnostics
 
         public void Stop() {
             _stopwatch.Stop();
-            LogManager.GetLogger("DefaultLogger").Debug("* RelationTimer: " + _stopwatch.Elapsed.Seconds + "s " + _stopwatch.Elapsed.Milliseconds + "ms (" + _logMessage + ")");
+
+            Logging.Debug("* RelationTimer: " + _stopwatch.Elapsed.Seconds + "s " + _stopwatch.Elapsed.Milliseconds + "ms (" + _logMessage + ")");
         }
     }
 }

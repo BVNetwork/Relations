@@ -2,13 +2,14 @@
 using System.Web.UI.WebControls;
 using EPiCode.Relations.Core;
 using EPiServer.Core;
-using log4net;
 using EPiServer.Data;
+using EPiServer.Logging;
 
 namespace EPiCode.Relations.Plugins.Admin.Units
 {
     public partial class RelationValidationControl : System.Web.UI.UserControl
     {
+        private static readonly ILogger Logger = LogManager.GetLogger(typeof(RelationValidationControl));
         private PageData _pageLeft;
         private PageData _pageRight;
         
@@ -56,7 +57,7 @@ namespace EPiCode.Relations.Plugins.Admin.Units
                         return page.PageName;
                 }
                 catch (Exception e) {
-                    LogManager.GetLogger("DefaultLogger").Error("EPiCode.Relations.RelationValidationControl - Page in relation not found : " + e.Message);                    
+                    Logger.Debug("EPiCode.Relations.RelationValidationControl - Page in relation not found : " + e.Message);                    
                 }
             }
             return "["+pageID.ToString()+"]";

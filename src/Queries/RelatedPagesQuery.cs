@@ -9,6 +9,7 @@ using EPiServer.Shell.Search;
 using EPiServer.Core;
 using EPiCode.Relations.Core;
 using EPiServer;
+using EPiCode.Relations.Diagnostics;
 
 namespace EPiCode.Relations.EditorDescriptors
 {
@@ -85,13 +86,12 @@ namespace EPiCode.Relations.EditorDescriptors
                         }
                         catch
                         {
-                            log4net.LogManager.GetLogger(this.GetType()).Warn(string.Format("Error fetching page {0} related to {1}", pageid, contextPage.ID));
+                            Logging.Warning(string.Format("Error fetching page {0} related to {1}", pageid, contextPage.ID));
                         }
-
                     }
                 }
                 catch {
-                    log4net.LogManager.GetLogger(this.GetType()).Warn(string.Format("Error fetching relations from page {0}", contextPage.ID));
+                    Logging.Warning(string.Format("Error fetching relations from page {0}", contextPage.ID));
                 }
 
 

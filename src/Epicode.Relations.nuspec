@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Epicode.Relations</id>
-    <version>4.0.3</version>
+    <version>4.1.1</version>
     <title>Relations</title>
     <authors>The EPiCode Community</authors>
     <owners>BV Network AS</owners>
@@ -19,7 +19,7 @@
       <reference file="EPiCode.Relations.dll" />
     </references>
     <dependencies>
-      <dependency id="EPiServer.CMS.Core" version="9.3.0.0" />
+      <dependency id="EPiServer.CMS.Core" version="9.0.0.0" />
     </dependencies>
 </metadata>
   <files>

@@ -2,7 +2,7 @@
 using EPiCode.Relations.Core;
 using EPiServer.Core;
 using EPiServer;
-using log4net;
+using EPiCode.Relations.Diagnostics;
 
 namespace EPiCode.Relations.Plugins.Edit.Units
 {
@@ -56,7 +56,7 @@ namespace EPiCode.Relations.Plugins.Edit.Units
                 return null;
             }
             catch (Exception e) {
-                LogManager.GetLogger("DefaultLogger").Error("EPiCode.Relations.RelationControl - Page in relation not found : "+e.Message);
+                Logging.Error("EPiCode.Relations.RelationControl - Page in relation not found : "+e.Message);
                 return null;
             }
         }

@@ -157,7 +157,7 @@ namespace EPiCode.Relations.Core.RelationProviders.DDSInMemoryProvider
                 foreach (Rule rule in allRules)
                 {
                     int startPage = (rule.RelationHierarchyStartRight);
-                    if (startPage < 1 || IsDescendent(pageID, startPage))
+                    if (startPage <= 1 || IsDescendent(pageID, startPage))
                     {
                         rule.RuleDirection = Rule.Direction.Right;
                         relevantRules.Add(rule);
@@ -233,7 +233,7 @@ namespace EPiCode.Relations.Core.RelationProviders.DDSInMemoryProvider
             var rules = from r in RuleDataStore.Items<Rule>()
                         where r.Id == id
                         select r;
-            if(rules.Count() > 0)
+            if (rules.Count() > 0)
                 return rules.First<Rule>();
             Rule newRule = AddNewRule("New rule", "", "", "", "");
             return newRule;
@@ -295,6 +295,8 @@ namespace EPiCode.Relations.Core.RelationProviders.DDSInMemoryProvider
         {
             PageReference page = new PageReference(pageID);
             PageReference rootPage = new PageReference(startID);
+            if (startID == PageReference.RootPage.ID)
+                return true;
             while (page.ID != PageReference.RootPage.ID)
             {
                 if (page.ID == rootPage.ID)
@@ -320,7 +322,7 @@ namespace EPiCode.Relations.Core.RelationProviders.DDSInMemoryProvider
                 PropertyCriteriaCollection pageTypeCriterias = new PropertyCriteriaCollection();
 
                 if (hierarchyStart == null || hierarchyStart == PageReference.EmptyReference)
-                    hierarchyStart = PageReference.StartPage;
+                    hierarchyStart = PageReference.RootPage;
 
                 foreach (string s in pageTypeCollection)
                 {
@@ -344,7 +346,7 @@ namespace EPiCode.Relations.Core.RelationProviders.DDSInMemoryProvider
 
                 new EPiServer.Filters.FilterSort(EPiServer.Filters.FilterSortOrder.Alphabetical).Sort(pages);
 
-             
+
                 if (!string.IsNullOrEmpty(searchKeyWord))
                     for (int i = 0; i < pages.Count; i++)
                     {
@@ -367,9 +369,9 @@ namespace EPiCode.Relations.Core.RelationProviders.DDSInMemoryProvider
             return SearchRelations(rule, pageID, searchKeyWord, hierarchyStart, isLeftRule);
         }
 
-		private static void StoreInCache(string cacheKey, object relations)
-		{
-			// Check if caching is disabled - can be for debugging or troubleshooting
+        private static void StoreInCache(string cacheKey, object relations)
+        {
+            // Check if caching is disabled - can be for debugging or troubleshooting
             // Assumes caching is on unless it has been specified in the web.config file.
             string disabledSetting = ConfigurationManager.AppSettings[DISABLE_ALL_CACHING];
             bool disabled = false;
@@ -378,47 +380,47 @@ namespace EPiCode.Relations.Core.RelationProviders.DDSInMemoryProvider
                 if (disabled) return;
             }
 
-			// Make the cache dependent on the EPiServer cache, so we'll remove this
-			// when new pages are published, pages are deleted or we are notified by
-			// another server that the cache needs refreshing
-			string[] pageCacheDependencyKey = new String[1];
+            // Make the cache dependent on the EPiServer cache, so we'll remove this
+            // when new pages are published, pages are deleted or we are notified by
+            // another server that the cache needs refreshing
+            string[] pageCacheDependencyKey = new String[1];
             pageCacheDependencyKey[0] = RelationsCacheKey;
-			CacheDependency dependency = new CacheDependency(null, pageCacheDependencyKey);
+            CacheDependency dependency = new CacheDependency(null, pageCacheDependencyKey);
 
-			// Add to cache, with dependencies but no expiration policies
-			// If the cached item should be cached for a limited time (regardless of
-			// the cache dependency), add an absolute expiration date or a
-			// sliding expiration to the item.
-			// Also note, we use the Insert method that will overwrite any existing
-			// cache item with the same key. The Add method will throw an exception
-			// if an item with the same key exists.
-			System.Diagnostics.Debug.Write("Storing: Relations in cache: '" + cacheKey + "'", DEBUG_CATEGORY);
-			HttpContext.Current.Cache.Insert(cacheKey, relations, dependency);
-		}
+            // Add to cache, with dependencies but no expiration policies
+            // If the cached item should be cached for a limited time (regardless of
+            // the cache dependency), add an absolute expiration date or a
+            // sliding expiration to the item.
+            // Also note, we use the Insert method that will overwrite any existing
+            // cache item with the same key. The Add method will throw an exception
+            // if an item with the same key exists.
+            System.Diagnostics.Debug.Write("Storing: Relations in cache: '" + cacheKey + "'", DEBUG_CATEGORY);
+            HttpContext.Current.Cache.Insert(cacheKey, relations, dependency);
+        }
 
-		/// <summary>
-		/// Will get the pages from the cache, if it exists.
-		/// </summary>
-		/// <returns>A PageDataCollection with pages, or null if not in cache</returns>
-		private static object GetFromCache(string cacheKey)
-		{
-			object relations = null;
-			// Call inheriting class' implementation
+        /// <summary>
+        /// Will get the pages from the cache, if it exists.
+        /// </summary>
+        /// <returns>A PageDataCollection with pages, or null if not in cache</returns>
+        private static object GetFromCache(string cacheKey)
+        {
+            object relations = null;
+            // Call inheriting class' implementation
 
-			System.Diagnostics.Debug.Write("Attempt Get from cacheKey: " + cacheKey + "'", DEBUG_CATEGORY);
+            System.Diagnostics.Debug.Write("Attempt Get from cacheKey: " + cacheKey + "'", DEBUG_CATEGORY);
 
-			if (HttpContext.Current.Cache[cacheKey] != null)
-			{
-				// There are pages in the cache
-				relations = HttpContext.Current.Cache[cacheKey];
-				System.Diagnostics.Debug.Write("Found relations in cache for: '" + cacheKey + "'", DEBUG_CATEGORY);
-			}
-			else
-			{
+            if (HttpContext.Current.Cache[cacheKey] != null)
+            {
+                // There are pages in the cache
+                relations = HttpContext.Current.Cache[cacheKey];
+                System.Diagnostics.Debug.Write("Found relations in cache for: '" + cacheKey + "'", DEBUG_CATEGORY);
+            }
+            else
+            {
                 System.Diagnostics.Debug.Write("No relations found in cache for: '" + cacheKey + "'", DEBUG_CATEGORY);
-			}
+            }
             return relations;
-		}
+        }
 
         private static void SetKey()
         {
@@ -429,21 +431,22 @@ namespace EPiCode.Relations.Core.RelationProviders.DDSInMemoryProvider
 
         private static void SetKey(long value)
         {
-            HttpRuntime.Cache.Insert(RelationsCacheKey, value, null, 
-                Cache.NoAbsoluteExpiration, Cache.NoSlidingExpiration, 
+            HttpRuntime.Cache.Insert(RelationsCacheKey, value, null,
+                Cache.NoAbsoluteExpiration, Cache.NoSlidingExpiration,
                 CacheItemPriority.NotRemovable, new CacheItemRemovedCallback(RemovedCallback));
         }
 
-        internal static void UpdateCache() {
+        internal static void UpdateCache()
+        {
             UpdateLocalOnly();
             UpdateRemoteOnly();
         }
 
         internal static void UpdateLocalOnly()
         {
-            
-            HttpRuntime.Cache.Insert(RelationsCacheKey, DateTime.Now.Ticks, null, 
-                DateTime.MaxValue, Cache.NoSlidingExpiration, CacheItemPriority.NotRemovable, 
+
+            HttpRuntime.Cache.Insert(RelationsCacheKey, DateTime.Now.Ticks, null,
+                DateTime.MaxValue, Cache.NoSlidingExpiration, CacheItemPriority.NotRemovable,
                 new CacheItemRemovedCallback(RemovedCallback));
         }
 
@@ -466,7 +469,7 @@ namespace EPiCode.Relations.Core.RelationProviders.DDSInMemoryProvider
             }
         }
 
- 
+
 
 
     }
