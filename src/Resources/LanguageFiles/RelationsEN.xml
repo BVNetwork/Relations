@@ -14,6 +14,9 @@
         <error>ERROR: </error>
         <alreadyexists>The relation already exists!</alreadyexists>
       </edit>
+      <rules>
+        <IsHostingEvent>Is the host for an event</IsHostingEvent>
+      </rules>
     </relations>
   </language>
 </languages>

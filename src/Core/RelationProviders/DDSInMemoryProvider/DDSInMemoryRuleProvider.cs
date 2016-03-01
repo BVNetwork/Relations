@@ -132,7 +132,7 @@ namespace EPiCode.Relations.Core.RelationProviders.DDSInMemoryProvider
                 foreach (Rule rule in allRules)
                 {
                     int startPage = (rule.RelationHierarchyStartLeft);
-                    if (startPage < 1 || IsDescendent(pageID, startPage))
+                    if (startPage <= 1 || IsDescendent(pageID, startPage))
                     {
                         rule.RuleDirection = Rule.Direction.Left;
                         relevantRules.Add(rule);
@@ -293,6 +293,8 @@ namespace EPiCode.Relations.Core.RelationProviders.DDSInMemoryProvider
 
         public override bool IsDescendent(int pageID, int startID)
         {
+            if (startID == PageReference.StartPage.ID || startID == PageReference.RootPage.ID)
+                return true;
             PageReference page = new PageReference(pageID);
             PageReference rootPage = new PageReference(startID);
             if (startID == PageReference.RootPage.ID)

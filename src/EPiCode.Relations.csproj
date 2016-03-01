@@ -240,7 +240,9 @@
     <Content Include="Styles\Admin.css" />
     <Content Include="Styles\Edit.css" />
     <Content Include="Views\Blocks\PageListRelationsBlockControl.ascx" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Admin\RelationsAdmin.aspx.cs">

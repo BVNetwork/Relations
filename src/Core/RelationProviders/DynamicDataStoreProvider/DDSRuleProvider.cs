@@ -293,6 +293,8 @@ namespace EPiCode.Relations.Core.RelationProviders.DynamicDataStoreProvider
 
         public override bool IsDescendent(int pageID, int startID)
         {
+            if (startID == PageReference.StartPage.ID || startID == PageReference.RootPage.ID)
+                return true;
             PageReference page = new PageReference(pageID);
             PageReference rootPage = new PageReference(startID);
             while (page.ID != PageReference.RootPage.ID)
