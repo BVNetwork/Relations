@@ -297,7 +297,7 @@ namespace EPiCode.Relations.Core.RelationProviders.DDSInMemoryProvider
             // cache item with the same key. The Add method will throw an exception
             // if an item with the same key exists.
             System.Diagnostics.Debug.Write("Storing: Relations in cache: '" + cacheKey + "'", DEBUG_CATEGORY);
-            HttpContext.Current.Cache.Insert(cacheKey, relations, dependency);
+            HttpRuntime.Cache.Insert(cacheKey, relations, dependency);
         }
 
         /// <summary>
@@ -311,10 +311,10 @@ namespace EPiCode.Relations.Core.RelationProviders.DDSInMemoryProvider
 
             System.Diagnostics.Debug.Write("Attempt Get from cacheKey: " + cacheKey + "'", DEBUG_CATEGORY);
 
-            if (HttpContext.Current.Cache[cacheKey] != null)
+            if (HttpRuntime.Cache[cacheKey] != null)
             {
                 // There are pages in the cache
-                relations = HttpContext.Current.Cache[cacheKey];
+                relations = HttpRuntime.Cache[cacheKey];
                 System.Diagnostics.Debug.Write("Found relations in cache for: '" + cacheKey + "'", DEBUG_CATEGORY);
             }
             else
