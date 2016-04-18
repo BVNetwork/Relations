@@ -53,6 +53,7 @@ namespace EPiCode.Relations.Core.RelationProviders.DynamicDataStoreProvider
             relation.RuleName = rule;
             Save(relation);
             UpdateLocalOnly();
+            RaiseOnAddedRelation(new RelationEventArgs { CurrentRelation = relation, RelationName = relation.RuleName });
         }
 
         public override void Save(Relation relation)
@@ -227,6 +228,7 @@ namespace EPiCode.Relations.Core.RelationProviders.DynamicDataStoreProvider
         {
             RelationDataStore.Delete(relationToDelete.Id);
             UpdateCache();
+            RaiseOnDeletedRelation(new RelationEventArgs { CurrentRelation = relationToDelete, RelationName = relationToDelete.RuleName });
         }
 
         public override bool RelationExists(string rule, int pageLeft, int pageRight)
