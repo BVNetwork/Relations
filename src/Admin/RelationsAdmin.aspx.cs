@@ -17,7 +17,7 @@ namespace EPiCode.Relations.Admin
     {
         protected override void OnLoad(EventArgs e)
         {
-            if ((System.Web.Security.Roles.IsUserInRole("Administrators") || System.Web.Security.Roles.IsUserInRole("RelationAdmins")) == false)
+            if ((EPiServer.Security.PrincipalInfo.CurrentPrincipal.IsInRole("Administrators") || EPiServer.Security.PrincipalInfo.CurrentPrincipal.IsInRole("RelationAdmins")) == false)
                 throw new AccessDeniedException();
         }
 
