@@ -12,10 +12,10 @@
     "dijit/_WidgetsInTemplateMixin",
 
 //CMS
-    "epi/cms/_ContentContextMixin",
+    "epi-cms/_ContentContextMixin",
     "epi/shell/dnd/Source",
     "epi/shell/dnd/Target",
-    "epi/cms/component/ContentQueryGrid",
+    "epi-cms/component/ContentQueryGrid",
     "epi/dependency"
 
 ], function (

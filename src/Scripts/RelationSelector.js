@@ -9,8 +9,8 @@
     "epi/dependency",
     "epi/epi",
     "epi/shell/widget/_ValueRequiredMixin",
-    "epi/cms/dgrid/DnD",
-    "epi/cms/component/ContentQueryGrid",
+    "epi-cms/dgrid/DnD",
+    "epi-cms/component/ContentQueryGrid",
 
 
     //We are calling the require module class to ensure that the App module has been set up  
@@ -37,7 +37,7 @@ function (
         {
             templateString: "<div class=\"dijitInline\">\
                 <div data-dojo-attach-point=\"stateNode, tooltipNode\">\
-                <div data-dojo-attach-point=\"contentQuery\" data-dojo-type=\"epi/cms/component/ContentQueryGrid\" ></div>\
+                <div data-dojo-attach-point=\"contentQuery\" data-dojo-type=\"epi-cms/component/ContentQueryGrid\" ></div>\
                 </div>\
             </div>",
 

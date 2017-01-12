@@ -4,7 +4,7 @@ using EPiServer.Shell.ViewComposition;
 namespace EPiCode.Relations.Gadgets
 {
     [Component(
-        WidgetType = "relations.RelationEditor",
+        WidgetType = "relations/RelationEditor",
         PlugInAreas = PlugInArea.AssetsDefaultGroup,
         SortOrder= 900000,
         Title = "Relation editor", 
@@ -13,7 +13,7 @@ namespace EPiCode.Relations.Gadgets
     public class RelationEditorGadget : ComponentBase
     {
         public RelationEditorGadget()
-            : base("relations.RelationEditor")
+            : base("relations/RelationEditor")
         {
             this.Heading = "Relations";
             this.SortOrder = 10000;

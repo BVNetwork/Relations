@@ -14,10 +14,10 @@
     "dijit/_WidgetsInTemplateMixin",
 
 //CMS
-    "epi/cms/_ContentContextMixin",
+    "epi-cms/_ContentContextMixin",
     "epi/shell/dnd/Source",
     "epi/shell/dnd/Target",
-    "epi/cms/component/ContentQueryGrid",
+    "epi-cms/component/ContentQueryGrid",
     "epi/dependency",
     "epi/UriParser"
 
@@ -60,12 +60,12 @@
                                 <div class="relationsArea" id="relationsArea" style="background-color: #fff;" >\
                                     <div style="padding:5px;font-weight: bold;" data-dojo-attach-point="ruleDescription"></div><div style="padding:5px;margin-top: 5px;"><strong>Existing relations</strong></div>\
                                     <div data-dojo-attach-point="addRelationsArea">\
-                                     <div data-dojo-attach-point="relationsQuery" data-dojo-type="epi/cms/component/ContentQueryGrid"></div>\
+                                     <div data-dojo-attach-point="relationsQuery" data-dojo-type="epi-cms/component/ContentQueryGrid"></div>\
                                     </div>\
                                         <div style="padding:7px;color:#fff;font-weight:bold;opacity:0; background-color: #428bca;" data-dojo-attach-point="statusText" ></div>\
                                     <div style="clear:both;"></div><div style="padding:5px;margin-top:5px;"><strong>New relations</strong></div>\
                                     <div class="epi-gadgetInnerToolbar" data-dojo-attach-point="toolbar2">Search relations: <div data-dojo-type="dijit.form.TextBox" data-dojo-attach-point="queryText" data-dojo-props="intermediateChanges:true" data-dojo-attach-event="onChange: _reloadNotRelatedQuery"></div></div>\
-                                    <div data-dojo-attach-point="removeRelationsArea"><div data-dojo-attach-point="notRelatedQuery" data-dojo-type="epi/cms/component/ContentQueryGrid"></div></div>\
+                                    <div data-dojo-attach-point="removeRelationsArea"><div data-dojo-attach-point="notRelatedQuery" data-dojo-type="epi-cms/component/ContentQueryGrid"></div></div>\
                                 </div>\
                             </div>\
                         </div>\
