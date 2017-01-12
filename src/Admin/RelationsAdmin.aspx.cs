@@ -10,6 +10,7 @@ using EPiServer.DataAbstraction;
 using EPiServer.Filters;
 using EPiServer.ServiceLocation;
 using EPiServer.UI.Admin;
+using EPiCode.Relations.Helpers;
 
 namespace EPiCode.Relations.Admin
 {
@@ -17,7 +18,7 @@ namespace EPiCode.Relations.Admin
     {
         protected override void OnLoad(EventArgs e)
         {
-            if ((EPiServer.Security.PrincipalInfo.CurrentPrincipal.IsInRole("Administrators") || EPiServer.Security.PrincipalInfo.CurrentPrincipal.IsInRole("RelationAdmins")) == false)
+            if(SecurityHelper.IsRelationsAdmin() == false)
                 throw new AccessDeniedException();
         }
 
