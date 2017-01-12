@@ -371,7 +371,7 @@ namespace EPiCode.Relations.Core.RelationProviders.DynamicDataStoreProvider
 
         internal static void EnsureKey()
         {
-            if (CacheManager.RuntimeCacheGet(RelationsCacheKey) == null)
+            if (CacheManager.Get(RelationsCacheKey) == null)
             {
                 SetKey();
             }

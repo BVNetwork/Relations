@@ -4,7 +4,7 @@ using EPiCode.Relations.Core;
 
 namespace EPiCode.Relations.Plugins.Admin
 {
-    public partial class ResetToDefault : EPiServer.UI.SystemPageBase
+    public partial class ResetToDefault : EPiServer.Shell.WebForms.ContentWebFormsBase
     {
 
         protected override void OnLoadComplete(EventArgs e)

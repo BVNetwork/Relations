@@ -10,6 +10,8 @@ using EPiServer.Data;
 using EPiServer.Filters;
 using EPiServer.ServiceLocation;
 using EPiServer.Util;
+using EPiServer.DataAbstraction;
+
 
 namespace EPiCode.Relations.Plugins.Admin.Units
 {
@@ -21,8 +23,11 @@ namespace EPiCode.Relations.Plugins.Admin.Units
         public Rule CurrentRule { get; set; }
         protected void Page_Load(object sender, EventArgs e)
         {
-            RulePageTypeLeft.DataSource = EPiServer.DataAbstraction.PageType.List();
-            RulePageTypeRight.DataSource = EPiServer.DataAbstraction.PageType.List();
+            var repository = ServiceLocator.Current.GetInstance<IContentTypeRepository>();
+            var pageTypes = (from pagetypes in repository.List() where (pagetypes as PageType != null) select pagetypes);
+
+            RulePageTypeLeft.DataSource = pageTypes;
+            RulePageTypeRight.DataSource = pageTypes;
             SortOrderLeft.DataSource = Enum.GetNames(typeof(FilterSortOrder));
             SortOrderRight.DataSource = Enum.GetNames(typeof(FilterSortOrder));
 
@@ -211,15 +216,11 @@ namespace EPiCode.Relations.Plugins.Admin.Units
 
         protected PageData GetPage(int page)
         {
-            try
-            {
-                return ServiceLocator.Current.GetInstance<IContentRepository>().Get<IContent>(new ContentReference(page)) as PageData;
-            }
-            catch (Exception e)
-            {
-                StatusLiteral.Text = "<div class='alert alert-danger'><b>Page "+page.ToString()+" could not be found. Using Start Page instead.</b></div>";
-                return null;
-            }
+            PageData pageData = PageEngine.GetPage(page);
+            if (pageData != null)
+                return pageData;
+            StatusLiteral.Text = "<div class='alert alert-danger'><b>Page "+page.ToString()+" could not be found. Using Start Page instead.</b></div>";
+            return null;
         }
 
     }

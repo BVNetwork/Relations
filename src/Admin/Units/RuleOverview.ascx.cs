@@ -42,14 +42,7 @@ namespace EPiCode.Relations.Admin.Units
 
         protected PageData GetPage(int page)
         {
-            try
-            {
-                return ServiceLocator.Current.GetInstance<IContentRepository>().Get<IContent>(new ContentReference(page)) as PageData;
-            }
-            catch (Exception e)
-            {
-                return null;
-            }
+            return PageEngine.GetPage(page);
         }
 
         protected string GetPageName(int pageId)

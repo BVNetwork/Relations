@@ -1,6 +1,6 @@
 ﻿using EPiServer.Core;
 using EPiServer;
-
+using EPiServer.ServiceLocation;
 
 namespace EPiCode.Relations.Core
 {
@@ -20,15 +20,13 @@ namespace EPiCode.Relations.Core
 
         public static PageData GetPage(int page)
         {
-            PageReference pr = new PageReference(page);
-            try {
-                if (pr != null && pr != PageReference.EmptyReference)
-                    return DataFactory.Instance.GetPage(pr);
-                return null;
+            ContentReference pageRef = new ContentReference(page);
+            if (pageRef != null && pageRef != ContentReference.EmptyReference)
+            {
+                PageData pageData = ServiceLocator.Current.GetInstance<IContentRepository>().Get<IContent>(pageRef) as PageData;
+                return pageData;
             }
-            catch (PageNotFoundException pageNotFound) {
-                return null;
-            }
+            return null;
         }
     }
 }
