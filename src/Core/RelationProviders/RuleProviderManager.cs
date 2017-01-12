@@ -63,8 +63,7 @@ namespace EPiCode.Relations.Core.RelationProviders
             }
             catch (Exception e)
             {
-                
-                return null;
+                throw new Exception("Error loading RuleProvider.", e);
             }
 
         }

@@ -30,9 +30,6 @@ namespace EPiCode.Relations.Core.RelationProviders.TestProvider
             for (int i = 0; i < j; i++)
                 relations.Add(new Relation { RuleName = rule.RuleName, PageIDLeft = pageID, PageIDRight = GetRandomPageID()});
             return relations;
-
-            
-            return relations;
         }
 
         private List<int> getFakeIntList()

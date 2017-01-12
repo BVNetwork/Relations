@@ -206,7 +206,7 @@ namespace EPiCode.Relations.EditorDescriptors
                 }
 
                 PageReference contextPage = new PageReference(relationPageLeft);
-                if (contextPage != null && relationPageRight != null && relationPageLeft != null)
+                if (contextPage != null)
 
                     try
                     {
@@ -267,7 +267,7 @@ namespace EPiCode.Relations.EditorDescriptors
                 }
 
                 PageReference contextPage = new PageReference(relationPageLeft);
-                if (contextPage != null && relationPageRight != null && relationPageLeft != null)
+                if (contextPage != null)
 
                     try
                     {

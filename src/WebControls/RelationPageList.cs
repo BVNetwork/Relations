@@ -7,7 +7,6 @@ using EPiCode.Relations.Core;
 
 namespace EPiCode.Relations.WebControls
 {
-    [CLSCompliant(false)]
     public partial class RelationPageList : EPiServer.UserControlBase
     {
         private ITemplate _ItemTemplate;
