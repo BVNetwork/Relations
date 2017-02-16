@@ -2,3 +2,4 @@ packages/
 src/bin/
 src/obj/
 .vs/config/applicationhost.config
+.vs/
