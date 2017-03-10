@@ -21,10 +21,13 @@ namespace EPiCode.Relations.Core
         public static PageData GetPage(int page)
         {
             ContentReference pageRef = new ContentReference(page);
-            if (pageRef != null && pageRef != ContentReference.EmptyReference)
+            if (pageRef != ContentReference.EmptyReference)
             {
-                PageData pageData = ServiceLocator.Current.GetInstance<IContentRepository>().Get<IContent>(pageRef) as PageData;
-                return pageData;
+                PageData pageData;
+                if (ServiceLocator.Current.GetInstance<IContentRepository>().TryGet(pageRef, out pageData))
+                {
+                    return pageData;
+                }
             }
             return null;
         }
