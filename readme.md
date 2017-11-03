@@ -14,6 +14,7 @@ To order, send an email to `info@bvnetwork.no` with the following information:
 	 	 
 EPiCode.Relations is licensed per EPiServer site. One license is required for each site that has the module installed. 
 
+## Screenshots ##
 ![Shows admin setup for relations](https://github.com/BVNetwork/Relations/blob/master/doc/screenshots/adminmode.png)
 
 See the module in action:
