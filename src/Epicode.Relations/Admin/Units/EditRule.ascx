@@ -1,7 +1,5 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="EditRule.ascx.cs" Inherits="EPiCode.Relations.Plugins.Admin.Units.EditRule" EnableViewState="true" %>
 <%@ Import Namespace="EPiCode.Relations.Core" %>
-<%@ Register TagPrefix="ux" Namespace="EPiServer.Web.WebControls" Assembly="EPiServer" %>
-<%@ Register TagPrefix="ux" Namespace="EPiServer.Web.PropertyControls" Assembly="EPiServer" %>
 
 <div class="row">
     <div class="col-lg-2">
@@ -37,7 +35,7 @@
 
                                             <asp:TextBox runat="server" ID="RuleName" CssClass="form-control"></asp:TextBox>
                                             <div class="input-group-addon">
-                                                (<%=(CurrentRule != null && !string.IsNullOrEmpty(CurrentRule.RuleName)) ? EPiCode.Relations.Core.RelationEngine.Instance.GetRelationsCount(CurrentRule.RuleName) : 0 %>
+                                                (<%=CurrentRule != null && !string.IsNullOrEmpty(CurrentRule.RuleName) ? RelationEngine.Instance.GetRelationsCount(CurrentRule.RuleName) : 0 %>
                 relations)
                                             </div>
                                         </div>
@@ -159,7 +157,7 @@
                                                 Text="Root page" runat="server"></asp:Label>
                                             <div class="row">
                                                 <div style="margin-top: 5px;">
-                                                    <ux:InputPageReference runat="server" CssClass="" ID="RuleHierarchyStartPageReferenceLeft" />
+                                                    <episerver:InputPageReference runat="server" CssClass="" ID="RuleHierarchyStartPageReferenceLeft" />
                                                 </div>
                                             </div>
                                         </div>
@@ -252,7 +250,7 @@
                                                 Text="Root page" runat="server"></asp:Label>
                                             <div class="row">
                                                 <div style="margin-top: 5px;">
-                                                    <ux:InputPageReference runat="server" CssClass="" ID="RuleHierarchyStartPageReferenceRight" />
+                                                    <episerver:InputPageReference runat="server" CssClass="" ID="RuleHierarchyStartPageReferenceRight" />
                                                 </div>
                                             </div>
                                         </div>
