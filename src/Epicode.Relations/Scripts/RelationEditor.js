@@ -58,7 +58,8 @@
                             <div style="background-color: #ddd;" >\
                             <div data-dojo-attach-point="relationsArea"  >\
                                 <div class="relationsArea" id="relationsArea" style="background-color: #fff;" >\
-                                    <div style="padding:5px;font-weight: bold;" data-dojo-attach-point="ruleDescription"></div><div style="padding:5px;margin-top: 5px;"><strong>Existing relations</strong></div>\
+                                    <div style="padding:5px;font-weight: bold;" data-dojo-attach-point="ruleDescription"></div>\
+                                    <div style="padding:5px;margin-top: 5px;"><strong>Existing relations</strong></div>\
                                     <div data-dojo-attach-point="addRelationsArea">\
                                      <div data-dojo-attach-point="relationsQuery" data-dojo-type="epi-cms/component/ContentQueryGrid"></div>\
                                     </div>\
@@ -129,7 +130,7 @@
                     mycache["stuff"] = returnValue;
                     var found = false;
                     returnValue.forEach(function (rule) {
-                        mycache["this"].createButton(rule.id, rule.name, rule.description, rule.direction, mycache["this"], rule.guid);
+                        mycache["this"].createButton(rule.id, rule.name, rule.description, rule.direction, rule.sortOrder, mycache["this"], rule.guid);
                         if (mycache["this"].currentRule == rule.id && mycache["this"].currentDirection == rule.direction) {
                             found = true;
                         }
@@ -143,10 +144,10 @@
                
             },
 
-            createButton: function (buttonid, buttonName, ruleDisplayName, ruleDirection, from, guid) {
+            createButton: function (buttonid, buttonName, ruleDisplayName, ruleDirection, sortOrder, from, guid) {
                 var btnid = ("btn" + guid + ruleDirection);
                 if (!dojo.query('.' + btnid, this.contentName).length > 0) {
-                    var button = new dijit.form.ToggleButton({ id: btnid, label: buttonName, rule: buttonid, ruledirection: ruleDirection, ruledescription: ruleDisplayName });
+                    var button = new dijit.form.ToggleButton({ id: btnid, label: buttonName, rule: buttonid, ruledirection: ruleDirection, sortorder: sortOrder, ruledescription: ruleDisplayName });
                     button.set("class", "rulebutton " + btnid);
                     button.set("style", "display:inline;");
                     dojo.connect(button, "onClick", dojo.partial(this.enableButtons, button, from));
@@ -161,12 +162,21 @@
                 fx.fadeIn({ node: from.relationsArea, duration: 500 }).play();
                 dojo.query('.dijitButtonContents', this.contentName).style({ opacity: 0.7, color: "#000" });
                 dojo.query('#' + evt.id, this.contentName).style({ opacity: 1, color: "#428bca" });
-
-                from.switchRule(evt.rule, evt.ruledescription, evt.ruledirection, evt.rule);
+                from.switchRule(evt.rule, evt.ruledescription, evt.ruledirection, evt.sortorder);
             },
 
-            switchRule: function (rulename, ruledescr, ruledirection) {
-                html.set(this.ruleDescription, ruledescr);
+            switchRule: function (rulename, ruledescr, ruledirection, sortorder) {
+                
+               
+                if (sortorder) {
+                    if (ruledescr)
+                        ruledescr = ruledescr + "<br />";
+
+                    ruledescr = ruledescr + "<span style=\"font-weight: normal;\">Sort order: " + sortorder + "</span>" 
+                }
+
+                html.set(this.ruleDescription , ruledescr);
+
                 this.currentRule = rulename;
                 this.currentDirection = ruledirection;
                 var contextService = epi.dependency.resolve("epi.shell.ContextService");

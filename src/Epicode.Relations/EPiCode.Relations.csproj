@@ -387,9 +387,14 @@
       <DependentUpon>SettingsControl.ascx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Queries\AddRelationRest.cs" />
+    <Compile Include="Queries\OverviewRest.cs" />
     <Compile Include="Queries\RelatedPagesNotQuery.cs" />
     <Compile Include="Queries\RelatedPagesQuery.cs" />
     <Compile Include="Queries\RelatedPagesRest.cs" />
+    <Compile Include="Queries\RemoveRelationRest.cs" />
+    <Compile Include="Queries\RulesRest.cs" />
+    <Compile Include="Helpers\TranslationHelper.cs" />
     <Compile Include="Views\Blocks\PageListRelationsBlockControl.ascx.cs">
       <DependentUpon>PageListRelationsBlockControl.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
