@@ -66,7 +66,8 @@
                                         <div style="padding:7px;color:#fff;font-weight:bold;opacity:0; background-color: #428bca;" data-dojo-attach-point="statusText" ></div>\
                                     <div style="clear:both;"></div><div style="padding:5px;margin-top:5px;"><strong>New relations</strong></div>\
                                     <div class="epi-gadgetInnerToolbar" data-dojo-attach-point="toolbar2">Search relations: <div data-dojo-type="dijit.form.TextBox" data-dojo-attach-point="queryText" data-dojo-props="intermediateChanges:true" data-dojo-attach-event="onChange: _reloadNotRelatedQuery"></div></div>\
-                                    <div data-dojo-attach-point="removeRelationsArea"><div data-dojo-attach-point="notRelatedQuery" data-dojo-type="epi-cms/component/ContentQueryGrid"></div></div>\
+                                    <div data-dojo-attach-point="removeRelationsArea">\
+                                    <div data-dojo-attach-point="notRelatedQuery" data-dojo-type="epi-cms/component/ContentQueryGrid"></div></div>\
                                 </div>\
                             </div>\
                         </div>\
@@ -105,8 +106,6 @@
                 this.currentContext = contextService.currentContext;
 
                 this.contextChanged(this.currentContext, null);
-
-
             },
 
             rulestore: null,
@@ -239,7 +238,6 @@
 
 
             _reloadAllRelatedQueries: function () {
-                console.log("ReloadingAllRelatedQueries");
                 this._reloadRelatedQuery();
                 this._reloadNotRelatedQuery();
             },
@@ -248,7 +246,7 @@
 
                 this.relationsQuery.set("queryParameters", { queryText: "", relationPageLeft: this.currentContext.id, relationPageRight: null, relationRule: this.currentRule, action: "none", direction: this.currentDirection });
                 this.relationsQuery.set("queryName", "RelationsQuery");
-                console.log("RelationsQueryDone");
+                
                 if (!this.rulestore) {
                     var registry = dependency.resolve("epi.storeregistry");
                     this.rulestore = registry.get("relations.statusquery");
@@ -258,7 +256,10 @@
             _reloadNotRelatedQuery: function () {
                 this.notRelatedQuery.set("queryParameters", { queryText: this.queryText.value, relationPageLeft: this.currentContext.id, relationPageRight: null, relationRule: this.currentRule, direction: this.currentDirection });
                 this.notRelatedQuery.set("queryName", "NotRelationsQuery");
-                console.log("NotRelatedQueryDone");
+
+                if (this.dblclick) {
+                    this.notRelatedQuery.set("contextChangeEvent", "dblclick");
+                }
             },
 
             contextChanged: function (context, callerData) {
@@ -267,8 +268,6 @@
                 this.createButtonRow();
                 this._reloadAllRelatedQueries();
                 this.inherited(arguments);
-                console.log("Context changed successfully");
             }
-
         });
 });
