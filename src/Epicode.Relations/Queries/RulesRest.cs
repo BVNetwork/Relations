@@ -54,7 +54,7 @@ namespace EPiCode.Relations.EditorDescriptors
                         {
                             RuleName = rightRule.RuleTextRight, 
                             RuleDesc = rightRule.RuleDescriptionRight,
-                            RuleSortOrder = ruleSortOrder,
+                            RuleSortOrder =  ruleSortOrder,
                             RuleDirection = "right", 
                             RuleGuid = rightRule.Id.ExternalId.ToString(), 
                             RuleId = rightRule.RuleName
@@ -83,13 +83,12 @@ namespace EPiCode.Relations.EditorDescriptors
         }
 
         private static string GetRuleSortOrder(int sortOrder)
-        {
-            
+        {            
             var showSortOrder = ConfigurationHelper.GetAppSettingsConfigValueBool("Relations.ShowSortOrder", false);
 
             if (showSortOrder && (FilterSortOrder)sortOrder != FilterSortOrder.None)
             {
-                return ( (FilterSortOrder) sortOrder).ToString();                
+                return TranslationHelper.Translate("/system/editutil/sortorder" + sortOrder, ((FilterSortOrder)sortOrder).ToString());                
             }
 
             return string.Empty;

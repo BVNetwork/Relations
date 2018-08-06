@@ -11,6 +11,11 @@ namespace EPiCode.Relations.Helpers
             return ServiceLocator.Current.GetInstance<LocalizationService>().GetString(xpath);
         }
 
+        public static string Translate(string xpath, string fallback)
+        {
+            return ServiceLocator.Current.GetInstance<LocalizationService>().GetString(xpath, fallback);
+        }
+
         public static string GetValidationText(Validator.ValidationResult validation)
         {
             string errorMessage;
