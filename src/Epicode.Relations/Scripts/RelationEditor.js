@@ -247,6 +247,10 @@
                 this.relationsQuery.set("queryParameters", { queryText: "", relationPageLeft: this.currentContext.id, relationPageRight: null, relationRule: this.currentRule, action: "none", direction: this.currentDirection });
                 this.relationsQuery.set("queryName", "RelationsQuery");
                 
+                if (this.dblclick) {
+                    this.relationsQuery.set("contextChangeEvent", "dblclick");
+                }
+
                 if (!this.rulestore) {
                     var registry = dependency.resolve("epi.storeregistry");
                     this.rulestore = registry.get("relations.statusquery");
