@@ -26,7 +26,7 @@
     <file src="Resources\LanguageFiles\*.xml" target="content\Modules\Epicode.Relations\Resources\LanguageFiles\" />
     <file src="bin\Epicode.Relations.dll" target="lib\net40\Epicode.Relations.dll" />
     <file src="**\*.aspx" target="content\Modules\Epicode.Relations\" />
-    <file src="**\*.js" target="content\Modules\Epicode.Relations\$version$\" />
+    <file src="Scripts\*.js" target="content\Modules\Epicode.Relations\$version$\Scripts\" />
     <file src="**\*.ascx" target="content\Modules\Epicode.Relations\" />
     <file src="module.config" target="content\Modules\Epicode.Relations\" />
     <file src="Views\*.config" target="content\Modules\Epicode.Relations\Views\" />
