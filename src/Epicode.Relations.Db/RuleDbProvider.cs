@@ -13,7 +13,6 @@ using System.Data.Entity;
 using System.Linq;
 using System.Web;
 using System.Web.Caching;
-using Castle.Core.Internal;
 using Rule = EPiCode.Relations.Core.Rule;
 
 
@@ -78,6 +77,7 @@ namespace EPiCode.Relations.Db
                     {
                         // Update relations
                         ctx.Relations.Where(x => x.RuleName == existingName)
+                                     .ToList()
                                      .ForEach(x => x.RuleName = rule.RuleName);
                     }
                 }

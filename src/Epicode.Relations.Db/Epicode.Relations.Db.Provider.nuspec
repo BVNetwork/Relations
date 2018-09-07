@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
       <id>EPiCode.Relations.Db.Provider</id>
-      <version>10.0.2</version>
+      <version>11.0.100</version>
       <authors>Departementenes servicesenter</authors>
       <owners>Departementenes servicesenter</owners>
       <description>Relations module for storing EPiCode.Relations data in SQL-Server</description>
