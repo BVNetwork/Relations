@@ -1,8 +1,8 @@
-﻿using EPiServer.Core;
+﻿using System.Linq;
+using EPiServer.Core;
 using EPiServer.Shell.Services.Rest;
-using System.Linq;
 
-namespace EPiCode.Relations.EditorDescriptors
+namespace EPiCode.Relations.Queries
 {
     [RestStore("relations")]
     public class RelatedPagesRest : RestControllerBase

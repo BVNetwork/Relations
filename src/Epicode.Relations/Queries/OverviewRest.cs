@@ -3,7 +3,7 @@ using EPiCode.Relations.Core;
 using EPiServer.Core;
 using EPiServer.Shell.Services.Rest;
 
-namespace EPiCode.Relations.EditorDescriptors
+namespace EPiCode.Relations.Queries
 {
     [RestStore("overview")]
     public class OverviewRest : RestControllerBase

@@ -4,7 +4,7 @@ using EPiCode.Relations.Helpers;
 using EPiServer.Core;
 using EPiServer.Shell.Services.Rest;
 
-namespace EPiCode.Relations.EditorDescriptors
+namespace EPiCode.Relations.Queries
 {
     [RestStore("relationadd")]
     public class AddRelationRest : RestControllerBase

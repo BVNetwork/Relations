@@ -1,10 +1,8 @@
 ﻿using System;
 using EPiCode.Relations.Core;
-using EPiCode.Relations.Helpers;
-using EPiServer.Core;
-using EPiServer.Shell.Services.Rest;
+using EPiCode.Relations.Helpers;using EPiServer.Shell.Services.Rest;
 
-namespace EPiCode.Relations.EditorDescriptors
+namespace EPiCode.Relations.Queries
 {
     [RestStore("relationremove")]
     public class RemoveRelationRest : RestControllerBase
@@ -18,16 +16,13 @@ namespace EPiCode.Relations.EditorDescriptors
             return Rest("Hello world!");
         }
 
-
-
         public RestResult Post(string ruleName, string relationPageLeftString, string relationPageRightString, string ruleDirection)
         {
-            int relationPageLeft = 0;
-            int relationPageRight = 0;
-            bool isLeftRule = true;
-            string relationRule = "";
+            int relationPageLeft;
+            int relationPageRight;
+            bool isLeftRule;
+            string relationRule;
 
-            //string[] newRelationValues = (newRelation.ToString()).Split(';');
             try
             {
                 relationRule = ruleName;
@@ -41,31 +36,25 @@ namespace EPiCode.Relations.EditorDescriptors
                 return Rest(string.Format(TranslationHelper.Translate("/relations/edit/couldnotparse"), e.Message));
             }
 
-            PageReference contextPage = new PageReference(relationPageLeft);
-            if (contextPage != null)
 
-                try
+            try
+            {
+                if (isLeftRule)
                 {
-                    if (isLeftRule)
-                    {
-                        Relation rel = RelationEngine.Instance.GetRelation(relationRule,
-                            relationPageLeft, relationPageRight);
-                        RelationEngine.Instance.DeleteRelation(rel);
-                    }
-                    else
-                    {
-                        Relation rel = RelationEngine.Instance.GetRelation(relationRule,
-                            relationPageRight, relationPageLeft);
-                        RelationEngine.Instance.DeleteRelation(rel);
-
-                    }
+                    Relation rel = RelationEngine.Instance.GetRelation(relationRule, relationPageLeft, relationPageRight);
+                    RelationEngine.Instance.DeleteRelation(rel);
                 }
-                catch { }
+                else
+                {
+                    Relation rel = RelationEngine.Instance.GetRelation(relationRule, relationPageRight, relationPageLeft);
+                    RelationEngine.Instance.DeleteRelation(rel);
+
+                }
+            }
+            catch { }
 
 
             return Rest(TranslationHelper.Translate("/relations/edit/removed"));
         }
-
-
     }
 }

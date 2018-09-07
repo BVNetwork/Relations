@@ -1,14 +1,14 @@
-﻿using EPiServer.ServiceLocation;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Web;
-using EPiServer.Cms.Shell.UI.Rest.ContentQuery;
-using EPiServer.Shell.ContentQuery;
-using EPiServer.Shell.Search;
-using EPiServer.Core;
 using EPiCode.Relations.Core;
 using EPiServer;
+using EPiServer.Cms.Shell.UI.Rest.ContentQuery;
+using EPiServer.Core;
+using EPiServer.ServiceLocation;
+using EPiServer.Shell.ContentQuery;
+using EPiServer.Shell.Search;
 
-namespace EPiCode.Relations.EditorDescriptors
+namespace EPiCode.Relations.Queries
 {
     [ServiceConfiguration(typeof(IContentQuery))]
     public class RelatedPagesNotQuery : ContentQueryBase

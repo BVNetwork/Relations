@@ -7,7 +7,7 @@ using EPiServer.Filters;
 using EPiServer.Security;
 using EPiServer.Shell.Services.Rest;
 
-namespace EPiCode.Relations.EditorDescriptors
+namespace EPiCode.Relations.Queries
 {
     [RestStore("rules")]
     public class RulesRest : RestControllerBase
@@ -121,6 +121,4 @@ namespace EPiCode.Relations.EditorDescriptors
             public string RuleSortOrder;
         }
     }
-
-
 }
