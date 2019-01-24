@@ -16,7 +16,7 @@ namespace EPiCode.Relations.Gadgets
         public RelationEditorGadget()
             : base("relations/RelationEditor")
         {
-            Heading = "Relations";
+            Heading = TranslationHelper.Translate("/relastions/admin/relations",  "Relations");
             SortOrder = 10000;
             Settings.Add("dblclick", ConfigurationHelper.GetAppSettingsConfigValueBool("Relations.EnableDoubleClick", false));
         }
