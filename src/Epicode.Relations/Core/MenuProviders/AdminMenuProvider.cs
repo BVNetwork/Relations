@@ -9,13 +9,28 @@ namespace EPiCode.Relations.Core.MenuProviders
     [MenuProvider]
     public class AdminMenuProvider : IMenuProvider
     {
+        private readonly LocalizationService _localizationService;
+
+        public AdminMenuProvider(LocalizationService localizationService)
+        {
+            _localizationService = localizationService;
+        }
+
+
         public IEnumerable<MenuItem> GetMenuItems() {
-            var localizationService = ServiceLocator.Current.GetInstance<LocalizationService>();
+                              
             if (SecurityHelper.IsRelationsAdmin() == false)
+            {
                 return new List<MenuItem>();
-            return new List<MenuItem> {
-                new UrlMenuItem(localizationService.GetString("/relations/admin/relations"), "/global/Relations/","/Modules/EPiCode.Relations/Admin/RelationsAdmin.aspx")
-                    };
+            }
+
+            return new List<MenuItem>
+            {
+                new UrlMenuItem(
+                    _localizationService.GetString("/relations/admin/relations"), 
+                    "/global/Relations/",
+                    "/Modules/EPiCode.Relations/Admin/RelationsAdmin.aspx")
+            };
         }
     }
 }
