@@ -168,10 +168,11 @@
                 
                
                 if (sortorder) {
-                    if (ruledescr)
-                        ruledescr = ruledescr + "<br />";
-
-                    ruledescr = ruledescr + "<span style=\"font-weight: normal;\">Sort order: " + sortorder + "</span>" 
+                    if (ruledescr) {
+                        ruledescr = ruledescr + "<br /><span style=\"font-weight: normal;\">Sort order: " + sortorder + "</span>";
+                    } else {
+                        ruledescr = "<span style=\"font-weight: normal;\">Sort order: " + sortorder + "</span>";
+                    }
                 }
 
                 html.set(this.ruleDescription , ruledescr);
