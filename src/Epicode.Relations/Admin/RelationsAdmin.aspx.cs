@@ -1,15 +1,7 @@
 ﻿using System;
-using System.Linq;
-using System.Web;
 using System.Web.UI.WebControls;
 using EPiCode.Relations.Core;
-using EPiServer;
 using EPiServer.Core;
-using EPiServer.Data;
-using EPiServer.DataAbstraction;
-using EPiServer.Filters;
-using EPiServer.ServiceLocation;
-using EPiServer.UI.Admin;
 using EPiCode.Relations.Helpers;
 
 namespace EPiCode.Relations.Admin

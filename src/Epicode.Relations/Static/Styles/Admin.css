@@ -1,4 +1,8 @@
-﻿body {
+﻿html {
+    font-size: 16px
+}
+
+body {
     background-color: #fff;
     margin: 0;
     padding: 0;
@@ -9,7 +13,6 @@
 h1 {
     padding: 5px 0;
     margin: 0;
-    color: #fff;
     font-size: 36px;
     font-weight: bold;
     font-family: Verdana;
@@ -33,11 +36,8 @@ h2 {
 }
 
 .darkarea {
-    background-color: #2677af;
-    border-bottom: 1px solid #174564;
     margin: 0;
     padding: 10px 0;
-    color: #fff;
     overflow:hidden;
 }
 
