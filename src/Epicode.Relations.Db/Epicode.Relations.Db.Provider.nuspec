@@ -2,13 +2,14 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
       <id>EPiCode.Relations.Db.Provider</id>
-      <version>11.0.100</version>
-      <authors>Departementenes servicesenter</authors>
-      <owners>Departementenes servicesenter</owners>
+      <version>$version$</version>
+      <authors>The EPiCode Community</authors>
+      <owners>The EPiCode Community</owners>
       <description>Relations module for storing EPiCode.Relations data in SQL-Server</description>
       <tags>EPiServerModulePackage</tags>
       <dependencies>
         <dependency id="EntityFramework" version="6.0.0" />
+        <dependency id="EPiCode.Relations" version="11.0.0" />
       </dependencies>
     </metadata>
     <files>
