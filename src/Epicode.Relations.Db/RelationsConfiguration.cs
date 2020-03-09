@@ -16,6 +16,11 @@ namespace EPiCode.Relations.Db
             get { return Settings.Default.RemoveDeletedPageTypesFromRules; }
         }
 
+        public bool AutomaticMigrationsEnabled
+        {
+            get { return Settings.Default.AutomaticMigrationsEnabled; }
+        }
+
         public IPageSearch PageSearch
         {
             get { return (IPageSearch)Activator.CreateInstance(PageSearchType); }
