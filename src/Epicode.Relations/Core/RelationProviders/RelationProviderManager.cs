@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Configuration.Provider;
 using System.Linq;
+using EPiCode.Relations.Helpers;
 
 namespace EPiCode.Relations.Core.RelationProviders
 {
@@ -9,7 +11,8 @@ namespace EPiCode.Relations.Core.RelationProviders
     {
         private static RelationProviderBase _defaultProvider;
 
-        public static void Initialize() {
+        public static void Initialize()
+        {
             const string fallbackProviderSetting = "EPiCode.Relations.Core.RelationProviders.DynamicDataStoreProvider.DDSRelationProvider";
             string defaultProviderSetting = Settings.GetSettingValue("DefaultRelationProviderString");
             if (string.IsNullOrEmpty(defaultProviderSetting))
@@ -22,9 +25,12 @@ namespace EPiCode.Relations.Core.RelationProviders
 
         public static Type[] GetRelationProviders()
         {
+            var assemblyStartsWith = ConfigurationHelper.GetAppSettingsList("Relations.RelationProviderAssembliesStartsWith");
+
             var type = typeof(RelationProviderBase);
             var types = AppDomain.CurrentDomain.GetAssemblies()
                 .Where(ass => ass.IsDynamic == false)
+                .Where(ass => !assemblyStartsWith.Any() || assemblyStartsWith.Any(x => ass.FullName.StartsWith(x)))
                 .SelectMany(ass => ass.GetTypes())
                 .Where(p => type.IsAssignableFrom(p) && p != type);
             return types.ToArray<Type>();

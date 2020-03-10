@@ -305,6 +305,7 @@
     <Compile Include="Extensions\PageDataRelationExtension.cs" />
     <Compile Include="Extensions\PageReferenceRelationExtension.cs" />
     <Compile Include="Gadgets\RelationEditorGadget.cs" />
+    <Compile Include="Helpers\ConfigurationHelper.cs" />
     <Compile Include="Helpers\FacetsHelper.cs" />
     <Compile Include="Helpers\PageHelper.cs" />
     <Compile Include="Helpers\SecurityHelper.cs" />

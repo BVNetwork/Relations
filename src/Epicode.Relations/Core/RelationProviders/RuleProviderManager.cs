@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Configuration.Provider;
 using System.Linq;
+using EPiCode.Relations.Helpers;
 
 namespace EPiCode.Relations.Core.RelationProviders
 {
@@ -21,9 +23,12 @@ namespace EPiCode.Relations.Core.RelationProviders
 
         public static Type[] GetRuleProviders() {
 
+            var assemblyStartsWith = ConfigurationHelper.GetAppSettingsList("Relations.RuleProviderAssembliesStartsWith");
+
             var type = typeof(RuleProviderBase);
             var types = AppDomain.CurrentDomain.GetAssemblies()
                 .Where(ass => ass.IsDynamic == false)
+                .Where(ass => !assemblyStartsWith.Any() || assemblyStartsWith.Any(x => ass.FullName.StartsWith(x)))
                 .SelectMany(ass => ass.GetTypes())
                 .Where(p => type.IsAssignableFrom(p) && p != type);
             return types.ToArray<Type>();
