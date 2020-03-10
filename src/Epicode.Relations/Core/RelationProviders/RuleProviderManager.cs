@@ -22,9 +22,9 @@ namespace EPiCode.Relations.Core.RelationProviders
         public static Type[] GetRuleProviders() {
 
             var type = typeof(RuleProviderBase);
-            var alltypes = AppDomain.CurrentDomain.GetAssemblies();
             var types = AppDomain.CurrentDomain.GetAssemblies()
-                .SelectMany(s => s.GetTypes())
+                .Where(ass => ass.IsDynamic == false)
+                .SelectMany(ass => ass.GetTypes())
                 .Where(p => type.IsAssignableFrom(p) && p != type);
             return types.ToArray<Type>();
             
