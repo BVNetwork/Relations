@@ -1,15 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
-      <id>EPiCode.Relations.Db.Provider</id>
+      <id>Epicode.Relations.Db.Provider</id>
       <version>$version$</version>
       <authors>The EPiCode Community</authors>
       <owners>The EPiCode Community</owners>
+      <projectUrl>https://github.com/BVNetwork/Relations</projectUrl>
       <description>Relations module for storing EPiCode.Relations data in SQL-Server</description>
-      <tags>EPiServerModulePackage</tags>
+      <tags>EPiServerModulePackage Relations</tags>
       <dependencies>
         <dependency id="EntityFramework" version="6.0.0" />
-        <dependency id="EPiCode.Relations" version="11.0.0" />
+        <dependency id="Epicode.Relations" version="11.0.0" />
       </dependencies>
     </metadata>
     <files>
