@@ -10,7 +10,12 @@ namespace EPiCode.Relations.EditorDescriptors
     {
         public IEnumerable<ISelectItem> GetSelections(ExtendedMetadata metadata)
         {
-            var contactPages = DataFactory.Instance.GetChildren(PageReference.StartPage);
+            if (ContentReference.IsNullOrEmpty(ContentReference.StartPage))
+            {
+                return new List<ISelectItem>();
+            }
+
+            var contactPages = DataFactory.Instance.GetChildren(ContentReference.StartPage);
 
             return new List<SelectItem>(contactPages.Select(c => new SelectItem {Value = c.PageLink, Text = c.Name}));
         }
