@@ -91,16 +91,13 @@
                 </div>
             </div>
 
-            <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js" />
-            <script type="text/javascript" src="assets/twitterbootstrap/js/bootstrap-tab.js"></script>
+            <script type="text/javascript" src="/Modules/EPiCode.Relations/Static/js/jquery-3.6.0.min.js"></script>
             <script type="text/javascript">
                 jQuery(document).ready(function ($) {
                     $('#tabs').tab();
                 });
-
-
             </script>
-            <script type="text/javascript" src="/Modules/EPiCode.Relations/Static/js/bootstrap.js" />
+            <script type="text/javascript" src="/Modules/EPiCode.Relations/Static/js/bootstrap.js"></script>
 
         </div>
     </form>
