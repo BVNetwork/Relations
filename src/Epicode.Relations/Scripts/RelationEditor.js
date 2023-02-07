@@ -1,10 +1,11 @@
-﻿define([
+define([
 // Dojo
     "dojo/_base/declare",
     "dojo/html",
     "dojo/dom-geometry",
     "dojo/_base/fx",
     "dojo/topic",
+    "dojo/on",
 // Dijit
 
     "dijit/_TemplatedMixin",
@@ -18,29 +19,28 @@
     "epi/shell/dnd/Source",
     "epi/shell/dnd/Target",
     "epi-cms/component/ContentQueryGrid",
-    "epi/dependency",
-    "epi/UriParser"
+    "epi/dependency"
 
 ], function (
 // Dojo
-    declare,
-    html,
-    domGeometry,
-    fx,
-    topic,
+declare,
+html,
+domGeometry,
+fx,
+topic,
+on,
 // Dijit
-    _TemplatedMixin,
-    _WidgetBase,
-    _Container,
-    _LayoutWidget,
-    _WidgetsInTemplateMixin,
+_TemplatedMixin,
+_WidgetBase,
+_Container,
+_LayoutWidget,
+_WidgetsInTemplateMixin,
 //CMS
-    _ContentContextMixin,
-    Source,
-    Target,
-    ContentQueryGrid,
-    dependency,
-    UriParser
+_ContentContextMixin,
+Source,
+Target,
+ContentQueryGrid,
+dependency
 ) {
     return declare("relations.components.RelationEditor",
         [_Container, _LayoutWidget, _TemplatedMixin, _WidgetsInTemplateMixin, _WidgetBase, _ContentContextMixin], {
@@ -60,7 +60,7 @@
                                 <div class="relationsArea" id="relationsArea" style="background-color: #fff;" >\
                                     <div style="padding:5px;font-weight: bold;" data-dojo-attach-point="ruleDescription"></div>\
                                     <div style="padding:5px;margin-top: 5px;"><strong>Existing relations</strong></div>\
-                                    <div data-dojo-attach-point="addRelationsArea">\
+                                    <div data-dojo-attach-point="addRelationsArea" class="addRelationsArea">\
                                      <div data-dojo-attach-point="relationsQuery" data-dojo-type="epi-cms/component/ContentQueryGrid"></div>\
                                     </div>\
                                         <div style="padding:7px;color:#fff;font-weight:bold;opacity:0; background-color: #428bca;" data-dojo-attach-point="statusText" ></div>\
@@ -78,12 +78,46 @@
                 this._setupTargets();
             },
 
-            resize: function (newSize) {
+            setSize:function(){
+                var contentSize = domGeometry.getContentBox("relationsArea");
+                this.resizeDynamic({w: contentSize.w, h: contentSize.h + 59 })
+            },
+
+            resize:function(newSize){
+                if(this.useDynamicHeight){
+                    this.resizeDynamic(newSize);
+                }else{
+                    this.resizeStatic(newSize);
+                }
+            },
+
+            resizeStatic: function (newSize) {
                 this.inherited(arguments);
                 var otherContentSize = domGeometry.getMarginBox(this.contentName);
                 var gridSize = { w: newSize.w - 5, h: (newSize.h - otherContentSize.h - 100) / 2 };
                 this.relationsQuery.resize(gridSize);
                 this.notRelatedQuery.resize(gridSize);
+            },
+
+            resizeDynamic: function (newSize) {
+                this.inherited(arguments);
+                var otherContentSize = domGeometry.getMarginBox(this.contentName);
+                var items = $('.addRelationsArea table').length - 1;
+                items = items < 1 ? 1 : items;
+                var gridHeight = items * 33;
+                var newHeight = (newSize.h - otherContentSize.h - 100) / 2;
+                var gridSize = { w: newSize.w - 5, h: newHeight  };
+                var rGridSize = { w: gridSize.w, h: newHeight  };
+                var notGridSize =  { w: gridSize.w, h: newHeight  };
+
+                if(gridHeight < newHeight)
+                {
+                    rGridSize.h = gridHeight;
+                    notGridSize.h = newHeight + (newHeight - gridHeight);
+                }
+
+                this.relationsQuery.resize(rGridSize);
+                this.notRelatedQuery.resize(notGridSize);
             },
 
             _setupTargets: function () {
@@ -104,6 +138,15 @@
 
                 var contextService = epi.dependency.resolve("epi.shell.ContextService");
                 this.currentContext = contextService.currentContext;
+
+                if(this.useDynamicHeight)
+                {
+                    this.own(
+                        on(this.relationsQuery.grid.domNode, "dgrid-refresh-complete", function(){
+                            setTimeout(() => this.setSize(), 250);
+                        }.bind(this))
+                    );
+                }
 
                 this.contextChanged(this.currentContext, null);
             },
@@ -140,7 +183,7 @@
                         mycache["this"]._reloadAllRelatedQueries();
                     }
                 });
-               
+
             },
 
             createButton: function (buttonid, buttonName, ruleDisplayName, ruleDirection, sortOrder, from, guid) {
@@ -165,8 +208,8 @@
             },
 
             switchRule: function (rulename, ruledescr, ruledirection, sortorder) {
-                
-               
+
+
                 if (sortorder) {
                     if (ruledescr) {
                         ruledescr = ruledescr + "<br /><span style=\"font-weight: normal;\">Sort order: " + sortorder + "</span>";
@@ -209,7 +252,7 @@
 
             _onDropDataRemove: function (dndData, source, nodes, copy) {
                 var dropItem = dndData ? (dndData.length ? dndData[0] : dndData) : null;
-                
+
                 if (dropItem) {
                     dojo.when(dropItem.data, dojo.hitch(this, function (value) {
 
@@ -247,7 +290,7 @@
 
                 this.relationsQuery.set("queryParameters", { queryText: "", relationPageLeft: this.currentContext.id, relationPageRight: null, relationRule: this.currentRule, action: "none", direction: this.currentDirection });
                 this.relationsQuery.set("queryName", "RelationsQuery");
-                
+
                 if (this.dblclick) {
                     this.relationsQuery.set("contextChangeEvent", "dblclick");
                 }
