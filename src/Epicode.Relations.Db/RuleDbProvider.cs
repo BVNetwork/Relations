@@ -8,11 +8,11 @@ using EPiServer.Core;
 using EPiServer.Data;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Data.Entity;
 using System.Linq;
-using System.Web;
-using System.Web.Caching;
+using EPiServer.Framework.Cache;
+using EPiServer.ServiceLocation;
+using Microsoft.Extensions.Configuration;
 using Rule = EPiCode.Relations.Core.Rule;
 
 
@@ -254,7 +254,7 @@ namespace EPiCode.Relations.Db
                 if (page.ID == rootPage.ID)
                     return true;
 
-                page = DataFactory.Instance.GetPage(page).ParentLink;
+                page = ServiceLocator.Current.GetInstance<IContentLoader>().Get<PageData>(page).ParentLink;
             }
             return false;
         }
@@ -383,7 +383,7 @@ namespace EPiCode.Relations.Db
             {
                 // Try to get page
                 PageData pageData;              
-                if (DataFactory.Instance.TryGet(new ContentReference(searchPageId), out pageData) &&
+                if (ServiceLocator.Current.GetInstance<IContentLoader>().TryGet(new ContentReference(searchPageId), out pageData) &&
                     rule.IsLegalPageType(pageData.PageTypeName, !isLeftRule))
                 {                   
                     pages.Add(pageData);
@@ -408,19 +408,15 @@ namespace EPiCode.Relations.Db
         {
             // Check if caching is disabled - can be for debugging or troubleshooting
             // Assumes caching is on unless it has been specified in the web.config file.
-            string disabledSetting = ConfigurationManager.AppSettings[DisableAllCaching];
-            bool disabled;
-            if (bool.TryParse(disabledSetting, out disabled))
-            {
-                if (disabled) return;
-            }
+            bool disabled = ServiceLocator.Current.GetInstance<IConfiguration>().GetValue<bool>(DisableAllCaching);
+            if (disabled) return;
 
             // Make the cache dependent on the EPiServer cache, so we'll remove this
             // when new pages are published, pages are deleted or we are notified by
             // another server that the cache needs refreshing
-            var pageCacheDependencyKey = new String[1];
+            string[] pageCacheDependencyKey = new String[1];
             pageCacheDependencyKey[0] = RelationsCacheKey;
-            var dependency = new CacheDependency(null, pageCacheDependencyKey);
+            var cacheEvictionPolicy = new CacheEvictionPolicy(null, pageCacheDependencyKey);
 
             // Add to cache, with dependencies but no expiration policies
             // If the cached item should be cached for a limited time (regardless of
@@ -429,7 +425,8 @@ namespace EPiCode.Relations.Db
             // Also note, we use the Insert method that will overwrite any existing
             // cache item with the same key. The Add method will throw an exception
             // if an item with the same key exists.
-            HttpRuntime.Cache.Insert(cacheKey, relations, dependency);
+            System.Diagnostics.Debug.Write("Storing: Relations in cache: '" + cacheKey + "'", DebugCategory);
+            ServiceLocator.Current.GetInstance<IObjectInstanceCache>().Insert(cacheKey, relations, cacheEvictionPolicy);
         }
 
         /// <summary>
@@ -441,10 +438,10 @@ namespace EPiCode.Relations.Db
             object relations = null;
 
             // Call inheriting class' implementation
-            if (HttpRuntime.Cache[cacheKey] != null)
+            if (ServiceLocator.Current.GetInstance<IObjectInstanceCache>().Get(cacheKey) != null)
             {
                 // There are pages in the cache
-                relations = HttpRuntime.Cache[cacheKey];
+                relations = ServiceLocator.Current.GetInstance<IObjectInstanceCache>().Get(cacheKey);
             }
             else
             {
@@ -452,17 +449,6 @@ namespace EPiCode.Relations.Db
             }
 
             return relations;
-        }
-
-        private static void SetKey()
-        {
-            System.Diagnostics.Debug.Write("Setting relations cache key.");
-            SetKey(DateTime.UtcNow.Ticks);
-        }
-
-        private static void SetKey(long value)
-        {
-            HttpRuntime.Cache.Insert(RelationsCacheKey, value, null, Cache.NoAbsoluteExpiration, Cache.NoSlidingExpiration, CacheItemPriority.NotRemovable, RemovedCallback);
         }
 
         internal static void UpdateCache()
@@ -473,25 +459,12 @@ namespace EPiCode.Relations.Db
 
         internal static void UpdateLocalOnly()
         {
-            HttpRuntime.Cache.Insert(RelationsCacheKey, DateTime.Now.Ticks, null, DateTime.MaxValue, Cache.NoSlidingExpiration, CacheItemPriority.NotRemovable, RemovedCallback);
+            CacheManager.RemoveLocalOnly(RelationsCacheKey);
         }
 
         internal static void UpdateRemoteOnly()
         {
             CacheManager.RemoveRemoteOnly(RelationsCacheKey);
-        }
-
-        private static void RemovedCallback(string key, object value, CacheItemRemovedReason reason)
-        {
-            EnsureKey();
-        }
-
-        internal static void EnsureKey()
-        {
-            if (CacheManager.Get(RelationsCacheKey) == null)
-            {
-                SetKey();
-            }
         }
 
         #endregion

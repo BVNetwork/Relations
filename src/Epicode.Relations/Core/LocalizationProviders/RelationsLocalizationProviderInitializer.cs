@@ -6,6 +6,7 @@ using EPiServer.Framework;
 using EPiServer.Framework.Initialization;
 using EPiServer.Framework.Localization;
 using EPiServer.Framework.Localization.XmlResources;
+using EPiServer.ServiceLocation;
 
 namespace EPiCode.Relations.Core.LocalizationProviders
 {
@@ -21,17 +22,17 @@ namespace EPiCode.Relations.Core.LocalizationProviders
             ProviderBasedLocalizationService localizationService = context.Locate.Advanced.GetInstance<LocalizationService>() as ProviderBasedLocalizationService;
             if (localizationService != null)
             {
-                string langFolder = System.Web.HttpContext.Current.Server.MapPath(@"~/Modules/EPiCode.Relations/Resources/LanguageFiles/");
+                string langFolder = ""; // TODO NETCORE: Server.MapPath(@"~/Modules/EPiCode.Relations/Resources/LanguageFiles/");
                 if (Directory.Exists(langFolder))
                 {
                     NameValueCollection configValues = new NameValueCollection();
                     configValues.Add(FileXmlLocalizationProvider.PhysicalPathKey, langFolder);
-                    FileXmlLocalizationProvider localizationProvider = new FileXmlLocalizationProvider();
-                    localizationProvider.Initialize(ProviderName, configValues);
-                    localizationService.AddProvider(localizationProvider);
+                    // TODO NETCORE:
+                    // FileXmlLocalizationProvider localizationProvider = new FileXmlLocalizationProvider();
+                    // localizationProvider.Initialize(ProviderName, configValues);
+                    // localizationService.AddProvider(localizationProvider);
                 }
             }
-
         }
 
         public void Uninitialize(InitializationEngine context)

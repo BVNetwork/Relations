@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Web.Configuration;
+﻿using System.Collections.Generic;
+using EPiServer.ServiceLocation;
+using Microsoft.Extensions.Configuration;
 
 namespace EPiCode.Relations.Helpers
 {
@@ -16,30 +15,13 @@ namespace EPiCode.Relations.Helpers
         /// <returns>The appSettings value if parsable, defaultValue if not</returns>
         public static bool GetAppSettingsConfigValueBool(string key, bool defaultValue)
         {
-            string stringValue = WebConfigurationManager.AppSettings[key];
-            if (string.IsNullOrEmpty(stringValue))
-                return defaultValue;
-
-            bool retValue;
-            bool parsed = false;
-            parsed = bool.TryParse(stringValue, out retValue);
-            if (parsed)
-                return retValue;
-
-            // Could not parse, return default value
-            return defaultValue;
+            return ServiceLocator.Current.GetInstance<IConfiguration>().GetValue(key, defaultValue);
         }
 
-        public static string GetAppSettingsConfig(string key, string defaultValue)
+        private static string GetAppSettingsConfig(string key, string defaultValue)
         {
-            string stringValue = WebConfigurationManager.AppSettings[key];
-            if (string.IsNullOrEmpty(stringValue))
-                return defaultValue;
-            
-            return stringValue;
+            return ServiceLocator.Current.GetInstance<IConfiguration>().GetValue(key, defaultValue);
         }
-
-
 
         public static IList<string> GetAppSettingsList(string key)
         {

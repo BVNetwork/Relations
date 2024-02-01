@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Linq;
-using System.Web;
-using System.Web.Caching;
-using EPiCode.Relations.Diagnostics;
 using EPiServer;
 using EPiServer.Data;
 using EPiServer.Data.Dynamic;
+using EPiServer.Framework.Cache;
+using EPiServer.ServiceLocation;
+using Microsoft.Extensions.Configuration;
+using Timer = EPiCode.Relations.Diagnostics.Timer;
 
 namespace EPiCode.Relations.Core.RelationProviders.DynamicDataStoreProvider
 {
@@ -18,22 +18,11 @@ namespace EPiCode.Relations.Core.RelationProviders.DynamicDataStoreProvider
         private const string DISABLE_ALL_CACHING = "EPfCustomCachingDisableAllCache";
         public const string RelationsCacheKey = "RelationsCache.Version";
 
-        public static RelationProviderBase Instance
-        {
-            get
-            {
-                return RelationProviderManager.Provider;
-            }
-        }
-
-        static DDSRelationProvider()
-        {
-            SetKey();
-        }
+        public static RelationProviderBase Instance => RelationProviderManager.Provider;
 
         private static string GetCacheKey(int pageid, string rule, Rule.Direction direction)
         {
-            return "Relations-" + pageid + "-" + rule + "-" + direction.ToString();
+            return "Relations-" + pageid + "-" + rule + "-" + direction;
         }
 
         private static DynamicDataStore RelationDataStore
@@ -164,33 +153,7 @@ namespace EPiCode.Relations.Core.RelationProviders.DynamicDataStoreProvider
                 result.Add((direction == Rule.Direction.Left) ? relation.PageIDRight : relation.PageIDLeft);
             StoreInCache(cacheKey, result);
             return result;
-
         }
-
-
-        /*
-        public static List<int> GetRelationsForPageRoundTripHierarchy(int pageID, Rule rule, Relation relation)
-        {
-            Timer timer = new Timer("Starting query GetRelatedRelations for rule '" + rule.RuleName + "' with page " + pageID);
-            List<int> pages = new List<int>();
-            PageDataCollection descendents = PageEngine.GetDescendents(pageID, rule, relation);
-            foreach (PageData pd in descendents)
-            {
-                pages.Add(pd.PageLink.ID);
-            }
-            var pageTypeQuery = (from relations in RelationDataStore.Items<Relation>()
-                                 where (relations.RuleName == rule.RuleName && (pages.Contains(relations.PageIDLeft) || pages.Contains(relations.PageIDRight)))
-                                 select relations);
-
-            List<Relation> relationsForPage = pageTypeQuery.ToList();
-            ValidationFilter(relationsForPage);
-            List<int> result = new List<int>();
-            foreach (Relation pageRelations in relationsForPage)
-                result.Add(pageRelations.PageIDLeft == pageID ? pageRelations.PageIDRight : pageRelations.PageIDLeft);
-            timer.Stop();
-            return result;
-        }
-        */
 
         public override List<int> GetRelationsForPageTwoHop(int pageID, Rule firstRule, Rule.Direction firstDirection, Rule secondRule, Rule.Direction secondDirection)
         {
@@ -210,7 +173,7 @@ namespace EPiCode.Relations.Core.RelationProviders.DynamicDataStoreProvider
             List<Relation> existingRelations = pageTypeQuery.ToList();
             timer.Stop();
             if (existingRelations != null && existingRelations.Count > 0)
-                return existingRelations.First<Relation>();
+                return existingRelations.First();
             else
                 return new Relation();
         }
@@ -220,7 +183,7 @@ namespace EPiCode.Relations.Core.RelationProviders.DynamicDataStoreProvider
             var relation = from r in RelationDataStore.Items<Relation>()
                            where r.Id == id
                            select r;
-            return relation.First<Relation>();
+            return relation.First();
         }
 
 
@@ -237,7 +200,7 @@ namespace EPiCode.Relations.Core.RelationProviders.DynamicDataStoreProvider
                                  where (relations.RuleName == rule && ((relations.PageIDLeft == pageLeft && relations.PageIDRight == pageRight) || (relations.PageIDLeft == pageRight && relations.PageIDRight == pageLeft)))
                                  select relations);
             List<Relation> existingRelations = pageTypeQuery.ToList();
-            return (existingRelations != null && existingRelations.Count > 0);
+            return (existingRelations.Count > 0);
         }
 
         public override int GetRelationsCount(string rule)
@@ -281,19 +244,15 @@ namespace EPiCode.Relations.Core.RelationProviders.DynamicDataStoreProvider
         {
             // Check if caching is disabled - can be for debugging or troubleshooting
             // Assumes caching is on unless it has been specified in the web.config file.
-            string disabledSetting = ConfigurationManager.AppSettings[DISABLE_ALL_CACHING];
-            bool disabled = false;
-            if (bool.TryParse(disabledSetting, out disabled))
-            {
-                if (disabled) return;
-            }
-
+            bool disabled = ServiceLocator.Current.GetInstance<IConfiguration>().GetValue<bool>(DISABLE_ALL_CACHING);
+            if(disabled) return;
+            
             // Make the cache dependent on the EPiServer cache, so we'll remove this
             // when new pages are published, pages are deleted or we are notified by
             // another server that the cache needs refreshing
             string[] pageCacheDependencyKey = new String[1];
             pageCacheDependencyKey[0] = RelationsCacheKey;
-            CacheDependency dependency = new CacheDependency(null, pageCacheDependencyKey);
+            var cacheEvictionPolicy = new CacheEvictionPolicy(null, pageCacheDependencyKey);
 
             // Add to cache, with dependencies but no expiration policies
             // If the cached item should be cached for a limited time (regardless of
@@ -303,7 +262,7 @@ namespace EPiCode.Relations.Core.RelationProviders.DynamicDataStoreProvider
             // cache item with the same key. The Add method will throw an exception
             // if an item with the same key exists.
             System.Diagnostics.Debug.Write("Storing: Relations in cache: '" + cacheKey + "'", DEBUG_CATEGORY);
-            HttpRuntime.Cache.Insert(cacheKey, relations, dependency);
+            ServiceLocator.Current.GetInstance<IObjectInstanceCache>().Insert(cacheKey, relations, cacheEvictionPolicy);
         }
 
         /// <summary>
@@ -317,10 +276,10 @@ namespace EPiCode.Relations.Core.RelationProviders.DynamicDataStoreProvider
 
             System.Diagnostics.Debug.Write("Attempt Get from cacheKey: " + cacheKey + "'", DEBUG_CATEGORY);
 
-            if (HttpRuntime.Cache[cacheKey] != null)
+            if (ServiceLocator.Current.GetInstance<IObjectInstanceCache>().Get(cacheKey) != null)
             {
                 // There are pages in the cache
-                relations = HttpRuntime.Cache[cacheKey];
+                relations = ServiceLocator.Current.GetInstance<IObjectInstanceCache>().Get(cacheKey);
                 System.Diagnostics.Debug.Write("Found relations in cache for: '" + cacheKey + "'", DEBUG_CATEGORY);
             }
             else
@@ -328,20 +287,6 @@ namespace EPiCode.Relations.Core.RelationProviders.DynamicDataStoreProvider
                 System.Diagnostics.Debug.Write("No relations found in cache for: '" + cacheKey + "'", DEBUG_CATEGORY);
             }
             return relations;
-        }
-
-        private static void SetKey()
-        {
-            System.Diagnostics.Debug.Write("Setting relations cache key.");
-            SetKey(DateTime.UtcNow.Ticks);
-        }
-
-
-        private static void SetKey(long value)
-        {
-            HttpRuntime.Cache.Insert(RelationsCacheKey, value, null,
-                Cache.NoAbsoluteExpiration, Cache.NoSlidingExpiration,
-                CacheItemPriority.NotRemovable, new CacheItemRemovedCallback(RemovedCallback));
         }
 
         internal static void UpdateCache()
@@ -352,36 +297,12 @@ namespace EPiCode.Relations.Core.RelationProviders.DynamicDataStoreProvider
 
         internal static void UpdateLocalOnly()
         {
-
-            HttpRuntime.Cache.Insert(RelationsCacheKey, DateTime.Now.Ticks, null,
-                DateTime.MaxValue, Cache.NoSlidingExpiration, CacheItemPriority.NotRemovable,
-                new CacheItemRemovedCallback(RemovedCallback));
+            CacheManager.RemoveLocalOnly(RelationsCacheKey);
         }
-
 
         internal static void UpdateRemoteOnly()
         {
             CacheManager.RemoveRemoteOnly(RelationsCacheKey);
         }
-
-        private static void RemovedCallback(string key, object value, CacheItemRemovedReason reason)
-        {
-            EnsureKey();
-        }
-
-        internal static void EnsureKey()
-        {
-            if (CacheManager.Get(RelationsCacheKey) == null)
-            {
-                SetKey();
-            }
-        }
-
-
-
-
-
-
-
     }
 }

@@ -2,25 +2,23 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
+using System.Threading;
 using System.Web;
-using System.Web.Caching;
 using EPiServer;
 using EPiServer.Core;
 using EPiServer.Data;
 using EPiServer.Data.Dynamic;
+using EPiServer.Framework.Cache;
+using EPiServer.ServiceLocation;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Configuration;
 
 namespace EPiCode.Relations.Core.RelationProviders.DDSInMemoryProvider
 {
     public class DDSInMemoryProvider : RuleProviderBase
     {
 
-        public static RuleProviderBase Instance
-        {
-            get
-            {
-                return RuleProviderManager.Provider;
-            }
-        }
+        public static RuleProviderBase Instance => RuleProviderManager.Provider;
 
         private const string DEBUG_CATEGORY = "RelationsCacheBase";
         private const string DISABLE_ALL_CACHING = "EPfCustomCachingDisableAllCache";
@@ -43,13 +41,7 @@ namespace EPiCode.Relations.Core.RelationProviders.DDSInMemoryProvider
         public static event RuleEventHandler OnCreatedRule;
 
 
-        private DynamicDataStore RuleDataStore
-        {
-            get
-            {
-                return typeof(Rule).GetStore();
-            }
-        }
+        private DynamicDataStore RuleDataStore => typeof(Rule).GetStore();
 
         public override IEnumerable<Rule> GetAllRules()
         {
@@ -275,7 +267,7 @@ namespace EPiCode.Relations.Core.RelationProviders.DDSInMemoryProvider
         public override bool IsLeftRule(int pageID, Rule rule)
         {
             PageReference pageRef = new PageReference(pageID);
-            PageData pageData = DataFactory.Instance.GetPage(pageRef);
+            PageData pageData = ServiceLocator.Current.GetInstance<IContentLoader>().Get<PageData>(pageRef);
             string pageTypeLeft = HttpUtility.UrlDecode(rule.PageTypeLeft);
             string pageTypeRight = HttpUtility.UrlDecode(rule.PageTypeRight);
             if (pageTypeLeft.Contains(pageData.PageTypeName))
@@ -303,7 +295,7 @@ namespace EPiCode.Relations.Core.RelationProviders.DDSInMemoryProvider
             {
                 if (page.ID == rootPage.ID)
                     return true;
-                page = DataFactory.Instance.GetPage(page).ParentLink;
+                page = ServiceLocator.Current.GetInstance<IContentLoader>().Get<PageData>(page).ParentLink;
             }
             return false;
         }
@@ -339,9 +331,9 @@ namespace EPiCode.Relations.Core.RelationProviders.DDSInMemoryProvider
                     }
                 }
 
-                PageDataCollection pages = DataFactory.Instance.FindPagesWithCriteria(hierarchyStart, pageTypeCriterias);
+                PageDataCollection pages = ServiceLocator.Current.GetInstance<IPageCriteriaQueryService>().FindPagesWithCriteria(hierarchyStart, pageTypeCriterias);
 
-                PageData rootPage = DataFactory.Instance.GetPage(hierarchyStart);
+                PageData rootPage = ServiceLocator.Current.GetInstance<IContentLoader>().Get<PageData>(hierarchyStart);
                 if (pageTypeCollection.Contains<string>(rootPage.PageTypeName) && !pages.Contains(rootPage))
                     pages.Add(rootPage);
 
@@ -375,19 +367,15 @@ namespace EPiCode.Relations.Core.RelationProviders.DDSInMemoryProvider
         {
             // Check if caching is disabled - can be for debugging or troubleshooting
             // Assumes caching is on unless it has been specified in the web.config file.
-            string disabledSetting = ConfigurationManager.AppSettings[DISABLE_ALL_CACHING];
-            bool disabled = false;
-            if (bool.TryParse(disabledSetting, out disabled))
-            {
-                if (disabled) return;
-            }
-
+            bool disabled = ServiceLocator.Current.GetInstance<IConfiguration>().GetValue<bool>(DISABLE_ALL_CACHING);
+            if(disabled) return;
+            
             // Make the cache dependent on the EPiServer cache, so we'll remove this
             // when new pages are published, pages are deleted or we are notified by
             // another server that the cache needs refreshing
             string[] pageCacheDependencyKey = new String[1];
             pageCacheDependencyKey[0] = RelationsCacheKey;
-            CacheDependency dependency = new CacheDependency(null, pageCacheDependencyKey);
+            var cacheEvictionPolicy = new CacheEvictionPolicy(null, pageCacheDependencyKey);
 
             // Add to cache, with dependencies but no expiration policies
             // If the cached item should be cached for a limited time (regardless of
@@ -397,7 +385,7 @@ namespace EPiCode.Relations.Core.RelationProviders.DDSInMemoryProvider
             // cache item with the same key. The Add method will throw an exception
             // if an item with the same key exists.
             System.Diagnostics.Debug.Write("Storing: Relations in cache: '" + cacheKey + "'", DEBUG_CATEGORY);
-            HttpRuntime.Cache.Insert(cacheKey, relations, dependency);
+            ServiceLocator.Current.GetInstance<IObjectInstanceCache>().Insert(cacheKey, relations, cacheEvictionPolicy);
         }
 
         /// <summary>
@@ -411,31 +399,18 @@ namespace EPiCode.Relations.Core.RelationProviders.DDSInMemoryProvider
 
             System.Diagnostics.Debug.Write("Attempt Get from cacheKey: " + cacheKey + "'", DEBUG_CATEGORY);
 
-            if (HttpRuntime.Cache[cacheKey] != null)
+            if (ServiceLocator.Current.GetInstance<IObjectInstanceCache>().Get(cacheKey) != null)
             {
                 // There are pages in the cache
-                relations = HttpRuntime.Cache[cacheKey];
+                relations = ServiceLocator.Current.GetInstance<IObjectInstanceCache>().Get(cacheKey);
                 System.Diagnostics.Debug.Write("Found relations in cache for: '" + cacheKey + "'", DEBUG_CATEGORY);
             }
             else
             {
                 System.Diagnostics.Debug.Write("No relations found in cache for: '" + cacheKey + "'", DEBUG_CATEGORY);
             }
+            
             return relations;
-        }
-
-        private static void SetKey()
-        {
-            System.Diagnostics.Debug.Write("Setting relations cache key.");
-            SetKey(DateTime.UtcNow.Ticks);
-        }
-
-
-        private static void SetKey(long value)
-        {
-            HttpRuntime.Cache.Insert(RelationsCacheKey, value, null,
-                Cache.NoAbsoluteExpiration, Cache.NoSlidingExpiration,
-                CacheItemPriority.NotRemovable, new CacheItemRemovedCallback(RemovedCallback));
         }
 
         internal static void UpdateCache()
@@ -446,33 +421,12 @@ namespace EPiCode.Relations.Core.RelationProviders.DDSInMemoryProvider
 
         internal static void UpdateLocalOnly()
         {
-
-            HttpRuntime.Cache.Insert(RelationsCacheKey, DateTime.Now.Ticks, null,
-                DateTime.MaxValue, Cache.NoSlidingExpiration, CacheItemPriority.NotRemovable,
-                new CacheItemRemovedCallback(RemovedCallback));
+            CacheManager.RemoveLocalOnly(RelationsCacheKey);
         }
-
 
         internal static void UpdateRemoteOnly()
         {
             CacheManager.RemoveRemoteOnly(RelationsCacheKey);
         }
-
-        private static void RemovedCallback(string key, object value, CacheItemRemovedReason reason)
-        {
-            EnsureKey();
-        }
-
-        internal static void EnsureKey()
-        {
-            if (CacheManager.Get(RelationsCacheKey) == null)
-            {
-                SetKey();
-            }
-        }
-
-
-
-
     }
 }

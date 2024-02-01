@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using EPiServer;
 using EPiServer.Core;
 using EPiServer.Data;
+using EPiServer.ServiceLocation;
 
 namespace EPiCode.Relations.Core.RelationProviders.TestProvider
 {
@@ -11,7 +12,6 @@ namespace EPiCode.Relations.Core.RelationProviders.TestProvider
         private const string DEBUG_CATEGORY = "RelationsCacheBase";
         private const string DISABLE_ALL_CACHING = "EPfCustomCachingDisableAllCache";
         public const string RelationsCacheKey = "RelationsCache.Version";
-
 
         public override void AddRelation(string rule, int pageLeft, int pageRight)
         {
@@ -92,20 +92,18 @@ namespace EPiCode.Relations.Core.RelationProviders.TestProvider
         public static PageDataCollection AllPages { 
             get {
                 if (_allPages == null)
-                    _allPages = GetAllPages(DataFactory.Instance.GetPage(PageReference.StartPage), new PageDataCollection());
+                    _allPages = GetAllPages(ServiceLocator.Current.GetInstance<IContentLoader>().Get<PageData>(PageReference.StartPage), new PageDataCollection());
                 return _allPages;
             }
         }
 
         private static PageDataCollection GetAllPages(PageData parent, PageDataCollection allPages) {
-            PageDataCollection children = DataFactory.Instance.GetChildren(parent.ContentLink.ToPageReference());
+            PageDataCollection children = new PageDataCollection(ServiceLocator.Current.GetInstance<IContentLoader>().GetChildren<PageData>(parent.ContentLink.ToPageReference()));
             foreach (PageData pd in children) {
                 allPages.Add(pd);
                 GetAllPages(pd, allPages);
             }
             return allPages;
-
-
         }
 
         public override List<int> GetRelationsForPageTwoHop(int pageID, Rule firstRule, Rule.Direction firstDirection, Rule secondRule, Rule.Direction secondDirection)

@@ -23,7 +23,7 @@ namespace EPiCode.Relations.Core.RelationProviders
 
         public static Type[] GetRuleProviders() {
 
-            var assemblyStartsWith = ConfigurationHelper.GetAppSettingsList("Relations.RuleProviderAssembliesStartsWith");
+            var assemblyStartsWith = ConfigurationHelper.GetAppSettingsList("Relations:ProviderAssembliesStartsWith");
 
             var type = typeof(RuleProviderBase);
             var types = AppDomain.CurrentDomain.GetAssemblies()

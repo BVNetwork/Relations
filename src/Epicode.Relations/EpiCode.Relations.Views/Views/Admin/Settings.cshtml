@@ -1,0 +1,49 @@
+@model EPiCode.Relations.Admin.Controllers.AdminSettingsViewModel
+
+
+
+<div class="alert alert-danger mt-2">Careful! Wrong settings could cause the site to stop responding!</div>
+
+
+<div class="card card-body bg-light">
+    <div id="ProviderOverview">
+        <br/>
+        <div class="row">
+            <div class="col-sm-2"><b>Relation Provider:</b></div>
+            <div class="col-sm-6">
+                @Model.CurrentRelationProvider
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-2"><b>Rule Provider:</b></div>
+            <div class="col-sm-6">
+                @Model.CurrentRuleProvider
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="card card-body bg-light mt-4">
+    @using (Html.BeginForm(new { controller = "Admin", action = "SaveSettings" }))
+    {
+        <div class="form-group col-sm-4">
+            @Html.DropDownListFor(m => m.CurrentRelationProvider, Model.RelationProviders, "Select relation provider", new { @class = "form-control" })
+        </div>
+
+        <div class="form-group col-sm-4">
+            @Html.DropDownListFor(m => m.CurrentRuleProvider, Model.RuleProviders, "Select rule provider", new { @class = "form-control" })
+        </div>
+
+        <div class="form-group col-sm-4">
+            <input type="submit" class="btn btn-danger" value="Change providers" onclick=""/>
+        </div>
+    }
+</div>
+
+
+<br />
+Default: <br/>
+EPiCode.Relations.Core.RelationProviders.DynamicDataStoreProvider.DDSRelationProvider<br/>
+EPiCode.Relations.Core.RelationProviders.DynamicDataStoreProvider.DDSRuleProvider

@@ -1,0 +1,33 @@
+@model EPiCode.Relations.Admin.Controllers.AdminImportExportModel
+
+@using (Html.BeginForm(new { controller = "Admin", action = "ImportOrExport" }))
+{
+    <div class="card card-body bg-light mt-2">
+
+        <div class="form-group col-sm-4">
+            @Html.CheckBoxFor(m => m.IncludeRules) Include rules
+        </div>
+        <div class="form-group col-sm-4">
+            @Html.CheckBoxFor(m => m.IncludeRelations) Include relations
+        </div>
+        <div class="form-group col-sm-4">
+            <input type="submit" class="btn btn-success" name="Command" value="Export"/>
+            <input type="submit" class="btn btn-success" name="Command" value="Import"/>
+        </div>
+    </div>
+
+    <div class="alert alert-success mt-2">
+        <strong> Relation import / export data</strong><br/>
+        <textarea class="form-control" name="textArea" rows="9">@Html.Raw(Model.Export)</textarea>
+    </div>
+}
+
+@if (!string.IsNullOrWhiteSpace(Model.Status))
+{
+    <div class="alert alert-warning">
+        <strong>Status</strong>
+        <div class="statusTextBox">
+            @Html.Raw(Model.Status)
+        </div>
+    </div>
+}

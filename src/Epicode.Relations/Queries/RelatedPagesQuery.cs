@@ -8,32 +8,33 @@ using EPiServer.Cms.Shell.UI.Rest.ContentQuery;
 using EPiServer.Core;
 using EPiServer.ServiceLocation;
 using EPiServer.Shell.ContentQuery;
+using Microsoft.AspNetCore.Http;
 
 namespace EPiCode.Relations.Queries
 {
     [ServiceConfiguration(typeof(IContentQuery))]
     public class RelatedPagesQuery : ContentQueryBase
     {
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public RelatedPagesQuery(IContentRepository contentRepository, IContentQueryHelper queryHelper)
+        public RelatedPagesQuery(IContentRepository contentRepository, IContentQueryHelper queryHelper, IHttpContextAccessor httpContextAccessor)
             : base(contentRepository, queryHelper)
         {
-
+            _httpContextAccessor = httpContextAccessor;
         }
-
-
+        
         /// <summary>        
         /// The key to trigger this query.        
         /// </summary>        
         public override string Name => "RelationsQuery";
-
-
+        
         protected override IEnumerable<IContent> GetContent(ContentQueryParameters parameters)
         {
-            if (HttpContext.Current.Session != null)
-            {
-                HttpContext.Current.Session["ValidationResult"] = "";
-            }
+            // TODO NETCORE: check if this is needed
+            // if (_httpContextAccessor.HttpContext?.Session != null)
+            // {
+            //     _httpContextAccessor.HttpContext.Session["ValidationResult"] = "";
+            // }
 
             bool isLeftRule = HttpUtility.HtmlDecode(parameters.AllParameters["direction"]) == "left";
             var relationPageLeft = HttpUtility.HtmlDecode(parameters.AllParameters["relationPageLeft"]);

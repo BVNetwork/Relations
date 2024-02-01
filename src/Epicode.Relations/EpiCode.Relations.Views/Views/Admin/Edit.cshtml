@@ -1,0 +1,428 @@
+@using EPiServer.Framework.Serialization
+@using EPiServer.Framework.Web.Resources
+@using EPiServer.Shell
+@using EPiServer.Shell.Modules
+@using EPiServer.Shell.Web.Mvc.Html
+@model EPiCode.Relations.AdminEditViewModel
+
+@inject ModuleTable modules
+@inject IClientResourceService resourceService
+
+@{
+    var moduleList = modules.GetModules()
+    .Select(m => m.CreateViewModel(modules, resourceService))
+    .OrderBy(mv => mv.ModuleDependencies != null ? mv.ModuleDependencies.Count : 0)
+    .ToList();
+    moduleList.ForEach(m => {
+        var sr = m.ScriptResources.Where(r => r.EndsWith("/ReportCenter.js", StringComparison.OrdinalIgnoreCase)).ToList();
+        foreach (var s in sr) {
+            m.ScriptResources.Remove(s);
+        }
+    });
+}
+
+<style>
+	.Sleek .list-group a.active, .Sleek .list-group a.active:visited, .Sleek .list-group a.active:active, .Sleek .list-group a.active:hover {
+		color: #ffffff;
+	}
+	
+	.epi-content-selector-plugnplay-textContainer, .Sleek .epi-content-selector-plugnplay-iconContainer.iconUpload{
+		display: none;
+	}
+	
+	
+</style>
+
+<div class="row mt-4">
+
+<div class="col-lg-2">
+	<div class="list-group">
+		@foreach (var rule in Model.Rules)
+		{
+			<a href="?ruleId=@rule.Id.ToString()" class="list-group-item list-group-item-action @(Model.RuleModel.RuleId == rule.Id.ToString() ? "active" : "") ">
+				@rule.RuleName
+			</a>
+		}
+	</div>
+</div>
+
+<div class="col-lg-10">
+
+
+
+@using (Html.BeginForm(new { controller = "Admin", action = "SaveRule" }))
+{
+
+		<fieldset>
+	        <div class="row">
+		        <div class="col-lg-12 mb-4">
+			        <div class="row">
+				        <div class="col-lg-8 ">
+
+					        <div class="card border-primary">
+						        <div class="card-header bg-primary text-white">Rule settings</div>
+						        <div class="card-body text-right">
+							        <div class="form-group row">
+								        @Html.LabelFor(m => m.RuleModel.RuleName, "Rule Name", new { @class = "col-sm-3 control-label" })
+								        <div class="input-group col-sm-8">
+									        @Html.TextBoxFor(m => m.RuleModel.RuleName, new { @class = "form-control", @for = "EditRuleControl_RuleName"})
+									        @Html.HiddenFor(m => m.RuleModel.RuleId)
+									        
+									        <div class="input-group-append">
+										        <div class="input-group-text">
+											        (@Model.NumberOfRelations relations)
+										        </div>
+									        </div>
+								        </div>
+							        </div>
+							        
+							        <div class="form-group row">
+								        @Html.LabelFor(m => m.RuleModel.EditModeAccessLevel, "Access level", new{ @class="col-sm-3 control-label" })
+								        <div class="input-group col-sm-6">
+									        @Html.DropDownListFor(m => m.RuleModel.EditModeAccessLevel, Model.AccessOptions, "", new { @class = "form-control" })
+								        </div>
+							        </div>
+						        </div>
+					        </div>
+				        </div>
+				        <div class="col-lg-4">
+					        <input type="submit" class="btn btn-success float-right" value="Save rule"/>
+				        </div>
+			        </div>
+
+		        </div>
+	        </div>
+
+	        <div class="row">
+
+				<div class="col-lg-6">
+					<div class="card border-primary">
+				        <div class="card-header bg-primary text-white">Left relation</div>
+
+			        <div class="card-body text-right">
+				        <div class="ruleEditor">
+
+					        <div class="smallPadding">
+						        <div class="form-group row">
+							        @Html.LabelFor(x => x.RuleModel.RuleTextLeft, "Rule text", new { @class = "col-sm-4 control-label" })
+							        <div class="col-sm-8">
+								        @Html.TextBoxFor(m => m.RuleModel.RuleTextLeft, new { @class = "form-control"})
+							        </div>
+						        </div>
+						        
+						        <div class="form-group row">
+							        @Html.LabelFor(x => x.RuleModel.RuleDescriptionLeft, "Description", new { @class = "col-sm-4 control-label" })
+							        <div class="col-sm-8">
+								        @Html.TextAreaFor(m => m.RuleModel.RuleDescriptionLeft, new { @class = "form-control", rows = "2", cols = "20" })
+							        </div>
+						        </div>
+						        
+						        <div class="card card-body bg-light mb-3">
+
+							        <div class="form-group row">
+								        <label for="RulePageTypesLeftListBox" id="EditRuleControl_Label7" class="col-sm-4 control-label">Page types</label>
+								        <div class="input-group col-sm-7">
+									        <select id="RulePageTypeLeft" class="form-control">
+										        @foreach(var item in Model.PageTypes)
+										        {
+											        <option value="@item.Value">@item.Text</option>
+										        }
+									        </select>
+									        
+									        <div class="input-group-append">
+										        <button id="AddPageTypeLeftButton" class="btn btn-success">Add</button>
+									        </div>
+								        </div>
+
+							        </div>
+							        <div class="form-group row mb-1">
+								        <label class="col-sm-4 control-label"></label>
+								        <div class="input-group col-sm-7">
+									        <select size="4"  id="RulePageTypesLeftListBox" class="form-control">
+										        @foreach (var item in Model.RuleModel.PageTypeLeft.Split(';'))
+										        {
+											        if (string.IsNullOrWhiteSpace(item) == false)
+											        {
+												        <option value="@item">@item</option>
+											        }
+										        }
+									        </select>
+								        </div>
+								        
+								        @Html.HiddenFor(m => m.RuleModel.PageTypeLeft)
+							        </div>
+							         <div class="form-group row">
+                                        <label class="col-sm-4 control-label"></label>
+                                        <div class="input-group col-sm-7">
+	                                        <button id="RemovePageTypeLeftButton" class="btn btn-danger btn-sm">Remove</button>
+                                        </div>
+                                    </div>
+						        </div>
+						        
+						        <div class="card card-body bg-light">
+							        <div class="form-group row">
+								        @Html.LabelFor(m => m.RuleModel.RelationHierarchyStartLeft, "Root page", new { @class = "col-sm-4 control-label" })
+								        <div class="input-group col-sm-7 text-left">
+											<div id="sourceSelector"
+											     data-dojo-type="epi-cms/widget/ContentSelector"
+											     data-dojo-props="repositoryKey: 'pages', allowedTypes: ['episerver.core.pagedata'], allowedDndTypes: [], value: '@Model.RuleModel.RelationHierarchyStartLeft', name: 'RuleModel.RelationHierarchyStartLeft', showSearchBox: false"></div>
+										</div>
+							        </div>
+						        </div>
+						        
+						        <div class="form-group row mt-3">
+							        <label for="EditRuleControl_SortOrderLeft" id="EditRuleControl_Label12" class="col-sm-4 control-label">Sort order</label>
+							        <div class="input-group col-sm-7">
+								        @Html.DropDownListFor(m => m.RuleModel.SortOrderLeft, Model.SortOrderLeft, "", new { @class = "form-control" })
+							        </div>
+
+						        </div>
+						        
+						        <div class="form-group">
+							        <asp:label cssclass="col-sm-4 control-label" text="Visibility" associatedcontrolid="VisibleLeft"></asp:label>
+
+							        <div class="col-sm-offset-4 col-sm-9">
+								        <div class="checkbox">
+									        <label>
+										        @Html.CheckBoxFor(m => m.RuleModel.VisibleLeft, new { @id = "EditRuleControl_VisibleLeft" })
+										        <label for="EditRuleControl_VisibleLeft">Visible in Edit Mode?</label>
+									        </label>
+								        </div>
+							        </div>
+						        </div>
+
+					        </div>
+				        </div>
+
+
+			        </div>
+		        </div>
+	        </div>
+	        <div class="col-lg-6">
+		        <div class="card border-primary">
+			        <div class="card-header bg-primary text-white">
+				        Right relation
+			        </div>
+			        <div class="card-body text-right">
+
+				        <div class="ruleEditor">
+
+					        <div class="smallPadding">
+								<div class="form-group row">
+							        @Html.LabelFor(x => x.RuleModel.RuleTextRight, "Rule text", new { @class = "col-sm-4 control-label" })
+							        <div class="col-sm-8">
+								        @Html.TextBoxFor(m => m.RuleModel.RuleTextRight, new { @class = "form-control"})
+							        </div>
+						        </div>
+						        <div class="form-group row">
+							        @Html.LabelFor(x => x.RuleModel.RuleDescriptionRight, "Description", new { @class = "col-sm-4 control-label" })
+							        <div class="col-sm-8">
+								        @Html.TextAreaFor(m => m.RuleModel.RuleDescriptionRight, new { @class = "form-control", rows = "2", cols = "20" })
+							        </div>
+						        </div>
+						        
+						        
+						        <div class="card card-body bg-light mb-3">
+                                
+							        <div class="form-group row">
+								        <label for="RulePageTypesRightListBox" class="col-sm-4 control-label">Page types</label>
+								        <div class="input-group col-sm-7">
+									        <select id="RulePageTypeRight" class="form-control">
+										        @foreach(var item in Model.PageTypes)
+										        {
+											        <option value="@item.Value">@item.Text</option>
+										        }
+									        </select>
+									        <div class="input-group-append">
+										        <button id="AddPageTypeRightButton" class="btn btn-success">Add</button>
+									        </div>
+								        </div>
+                                
+							        </div>
+							        <div class="form-group row mb-1">
+								        <label class="col-sm-4 control-label"></label>
+								        <div class="input-group col-sm-7">
+									        <select size="4" id="RulePageTypesRightListBox" class="form-control">
+										        @foreach (var item in Model.RuleModel.PageTypeRight.Split(';'))
+										        {
+											        if (string.IsNullOrWhiteSpace(item) == false)
+											        {
+												        <option value="@item">@item</option>
+											        }
+										        }
+									        </select>
+								        </div>
+                                								        
+								        @Html.HiddenFor(m => m.RuleModel.PageTypeRight)
+							        </div>
+							        <div class="form-group row">
+								        <label class="col-sm-4 control-label"></label>
+								        <div class="input-group col-sm-7">
+									        <button id="RemovePageTypeRightButton" class="btn btn-danger btn-sm">Remove</button>
+								        </div>
+							        </div>
+						        </div>
+						        
+						        <div class="card card-body bg-light">
+							        <div class="form-group row">
+
+								        <label class="col-sm-4 control-label">Root page</label>
+								        <div class="input-group col-sm-7 text-left">
+											<div id="sourceSelector2"
+											     data-dojo-type="epi-cms/widget/ContentSelector"
+											     data-dojo-props="repositoryKey: 'pages', allowedTypes: ['episerver.core.pagedata'], allowedDndTypes: [], value: '@Model.RuleModel.RelationHierarchyStartRight', name: 'RuleModel.RelationHierarchyStartRight', showSearchBox: true"></div>
+								        </div>
+							        </div>
+						        </div>
+						        
+						        <div class="form-group row mt-3">
+							        <label for="EditRuleControl_SortOrderRight" id="EditRuleControl_Label9" class="col-sm-4 control-label">Sort order</label>
+							        <div class="input-group col-sm-7">
+								        @Html.DropDownListFor(m => m.RuleModel.SortOrderRight, Model.SortOrderRight, "", new { @class = "form-control" })
+							        </div>
+						        </div>
+						        
+						        <div class="form-group">
+
+							        <asp:label cssclass="col-sm-4 control-label" text="Visibility" associatedcontrolid="VisibleRight"></asp:label>
+
+							        <div class="col-sm-offset-4 col-sm-9">
+								        <div class="checkbox">
+									        <label>
+								                @Html.CheckBoxFor(m => m.RuleModel.VisibleRight, new { @id = "EditRuleControl_VisibleRight" })
+                                                <label for="EditRuleControl_VisibleRight">Visible in Edit Mode?</label>
+									        </label>
+								        </div>
+							        </div>
+
+						        </div>
+
+					        </div>
+				        </div>
+
+			        </div>
+		        </div>
+	        </div>
+	        </div>
+	        </fieldset>
+
+	        <div class="col-lg-12 mt-3">
+                <input type="submit" name="command" class="btn btn-success float-right ml-2" value="Save rule"/>
+                <input type="submit" name="command" class="btn btn-danger float-right" onclick="return confirm('WARNING! Are you sure you want to delete rule? Rule will be deleted permanently!');" value="Delete rule">
+	        </div>
+        }
+	</div>
+</div>
+
+
+
+<script>		
+
+function addPageTypeButtonEventListeners(direction) {
+				    
+	
+    // Get the remove link element and add an event listener
+	var removeLink = document.getElementById(`RemovePageType${direction}Button`);
+	
+	removeLink.addEventListener("click", function(event) {
+		// Prevent the link from navigating
+		event.preventDefault();
+		
+		// Get the multi-select element
+        var multiSelect = document.getElementById(`RulePageTypes${direction}ListBox`);
+												
+		// Get seleted items from the multi-select
+		var selectedItems = multiSelect.selectedOptions;
+		
+		var hidden = document.getElementById(`RuleModel_PageType${direction}`);
+		// remove selectedItems from hidden
+		for (var i = selectedItems.length - 1; i >= 0; i--) {
+			hidden.value = hidden.value.replace(selectedItems[i].value, "");
+		}
+		
+		hidden.value = hidden.value.replace(";;", ";").replace(/^;+/, '').replace(/;+$/, '');
+	
+		
+		// Remove selected items from the multiSelect
+		for (var i = multiSelect.options.length - 1; i >= 0; i--) {
+			if (multiSelect.options[i].selected) {
+				multiSelect.remove(i);
+			}
+		}
+	});
+
+	// Get the submit button element
+	var submitButton = document.getElementById(`AddPageType${direction}Button`);
+	
+	// Add an event listener to the submit button
+	submitButton.addEventListener("click", function(event) {
+		// Prevent the link from navigating
+		event.preventDefault();
+		
+		// Get the dropdown element
+		var dropdown = document.getElementById(`RulePageType${direction}`);
+		
+		// Get the selected value from the dropdown
+		var selectedValue = dropdown.value;
+		
+		// Create a new option element
+		var option = document.createElement("option");
+		option.text = selectedValue;
+		option.value = selectedValue;
+		
+		// Get the multi-select element
+		var multiSelect = document.getElementById(`RulePageTypes${direction}ListBox`);
+		
+		// Append the new option to the multi-select
+		multiSelect.add(option);
+		
+		var hidden = document.getElementById(`RuleModel_PageType${direction}`);
+		hidden.value = hidden.value + ";" + selectedValue;
+		
+		hidden.value = hidden.value.replace(/^;+/, '');
+	});
+
+}
+
+addPageTypeButtonEventListeners("Left");
+addPageTypeButtonEventListeners("Right");
+
+</script>
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+@DojoConfigurationHelper.ConfigureDojo(false, true, true)
+
+<script type="text/javascript" src="@Paths.ToShellClientResource("ClientResources/dojo/dojo.js")"></script>
+<script type="text/javascript" src="@Paths.ToShellClientResource("ClientResources/epi/epi.js")"></script>
+
+<script>
+    // At this point it's not safe to require() arbitrary things yet or everything will blow up spectacularly. The
+    // "Bootstrapper" has to be run first, so only require that.
+    require(["epi/shell/Bootstrapper"], function (Bootstrapper) {
+
+        var bs = new Bootstrapper(@Html.Raw(Html.SerializeObject(moduleList, KnownContentTypes.Json)));
+
+        // Loads the specified module ("CMS") and all the script bundles ClientResources that come with it. If this isn't done
+        // correctly all require() calls will load modules with separate requests which can reduce the amount of total code
+        // loaded but generates a *lot* of requests in the process
+        bs.initializeApplication(null, "CMS").then(function () {
+            require([
+                "dojo/_base/connect",
+                "dojo/parser",
+                "epi-cms/ApplicationSettings"
+            ], function (
+                connect,
+                parser,
+                ApplicationSettings
+            ) {
+                connect.publish("/epi/shell/context/updateRequest", [{ uri: "epi.cms.contentdata:///" + ApplicationSettings.startPage }]);
+                parser.parse();
+            });
+        });
+
+        // It's now safe to require() anything including your own modules.
+
+    });
+</script>

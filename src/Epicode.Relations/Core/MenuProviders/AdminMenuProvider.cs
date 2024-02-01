@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using EPiServer.Framework.Localization;
-using EPiServer.ServiceLocation;
 using EPiServer.Shell.Navigation;
-using EPiCode.Relations.Helpers;
+using EPiServer.Shell;
 
 namespace EPiCode.Relations.Core.MenuProviders
 {
@@ -17,19 +17,62 @@ namespace EPiCode.Relations.Core.MenuProviders
         }
 
 
-        public IEnumerable<MenuItem> GetMenuItems() {
-                              
-            if (SecurityHelper.IsRelationsAdmin() == false)
+        public IEnumerable<MenuItem> GetMenuItems()
+        {
+            
+            var url = Paths.ToResource(GetType(), "admin");
+
+            var link = new UrlMenuItem("Relations", MenuPaths.Global + "/relations", url)
             {
-                return new List<MenuItem>();
-            }
+                SortIndex = 100,
+                AuthorizationPolicy = Constants.PolicyName
+            };
 
             return new List<MenuItem>
             {
-                new UrlMenuItem(
-                    _localizationService.GetString("/relations/admin/relations"), 
-                    "/global/Relations/",
-                    "/Modules/EPiCode.Relations/Admin/RelationsAdmin.aspx")
+                link,
+                new UrlMenuItem("Overview", MenuPaths.Global + "/relations/overview",
+                    Paths.ToResource(GetType(), "admin"))
+                {
+                    SortIndex = 200,
+                    AuthorizationPolicy = Constants.PolicyName
+                },
+                new UrlMenuItem("Rule editor", MenuPaths.Global + "/relations/edit",
+                    Paths.ToResource(GetType(), "admin/edit"))
+                {
+                    SortIndex = 300,
+                    AuthorizationPolicy = Constants.PolicyName
+                },
+                new UrlMenuItem("Validator", MenuPaths.Global + "/relations/validator/",
+                    Paths.ToResource(GetType(), "admin/relationvalidator"))
+                {
+                    SortIndex = 400,
+                    AuthorizationPolicy = Constants.PolicyName
+                },
+                new UrlMenuItem(string.Empty, MenuPaths.Global + "/relations/validator/validate",
+                    Paths.ToResource(GetType(), "admin/validate"))
+                {
+                    SortIndex = 405,
+                    IsAvailable = _ => false
+                },
+                new UrlMenuItem("Import and export", MenuPaths.Global + "/relations/query",
+                    Paths.ToResource(GetType(), "admin/importexport"))
+                {
+                    SortIndex = 500,
+                    AuthorizationPolicy = Constants.PolicyName
+                },
+                new UrlMenuItem(string.Empty, MenuPaths.Global + "/relations/query/import",
+                    Paths.ToResource(GetType(), "admin/importorexport"))
+                {
+                    SortIndex = 505,
+                    IsAvailable = _ => false
+                },
+                new UrlMenuItem("Settings", MenuPaths.Global + "/relations/settings",
+                    Paths.ToResource(GetType(), "admin/settings"))
+                {
+                    SortIndex = 600,
+                    AuthorizationPolicy = Constants.PolicyName
+                }
             };
         }
     }

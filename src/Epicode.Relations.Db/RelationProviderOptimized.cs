@@ -5,7 +5,7 @@ using EPiCode.Relations.Diagnostics;
 
 namespace EPiCode.Relations.Db
 {
-    public class RelationProviderOptimized : RelationProvider
+    public class RelationProviderOptimized : RelationDbProvider
     {
         public override List<Relation> GetRelationsForPage(int pageId, Rule rule)
         {

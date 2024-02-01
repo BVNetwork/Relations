@@ -1,6 +1,5 @@
 ﻿using System;
 using EPiCode.Relations.Db.PageSearch;
-using EPiCode.Relations.Db.Properties;
 
 namespace EPiCode.Relations.Db
 {
@@ -8,17 +7,17 @@ namespace EPiCode.Relations.Db
     {
         public string ConnectionStringName
         {
-            get { return Settings.Default.ConnectionStringName; }
+            get { return "EPiServerDB"; }
         }
 
         public bool RemoveDeletedPageTypesFromRules
         {
-            get { return Settings.Default.RemoveDeletedPageTypesFromRules; }
+            get { return true; }
         }
 
         public bool AutomaticMigrationsEnabled
         {
-            get { return Settings.Default.AutomaticMigrationsEnabled; }
+            get { return true; }
         }
 
         public IPageSearch PageSearch
@@ -34,7 +33,8 @@ namespace EPiCode.Relations.Db
 
         private Type GetConfiguredOrDefaultType()
         {
-            return !string.IsNullOrWhiteSpace(Settings.Default.PageSearch) ? Type.GetType(Settings.Default.PageSearch) : typeof (PageSearchFindPagesWithCriteria);
+            // return !string.IsNullOrWhiteSpace("Settings.Default.PageSearch") ? Type.GetType("Settings.Default.PageSearch") : typeof (PageSearchFindPagesWithCriteria);
+            return typeof(PageSearchFindPagesWithCriteria);
         }
 
         private static readonly Lazy<RelationsConfiguration> Lazy = new Lazy<RelationsConfiguration>(() => new RelationsConfiguration());

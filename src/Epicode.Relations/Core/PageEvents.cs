@@ -5,10 +5,11 @@ namespace EPiCode.Relations.Core
 {
     public class PageEvents : EPiServer.PlugIn.PlugInAttribute
     {
-        public static void Start()
-        {
-            DataFactory.Instance.DeletedContent += Instance_DeletedContent;
-        }
+        // TODO NETCORE: Check this
+        // public static void Start()
+        // {
+        //     DataFactory.Instance.DeletedContent += Instance_DeletedContent;
+        // }
 
         private static void Instance_DeletedContent(object sender, DeleteContentEventArgs e)
         {

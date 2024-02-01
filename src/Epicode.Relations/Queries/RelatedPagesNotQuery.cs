@@ -53,9 +53,5 @@ namespace EPiCode.Relations.Queries
 
             return result as PageDataCollection;
         }
-
-
     }
-
-
 }

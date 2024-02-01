@@ -38,7 +38,9 @@ namespace EPiCode.Relations.Core
 
         public static string GetSettingValue(string key)
         {
-            var settings = from r in SettingsDataStore.Items<Settings>()
+            var items = SettingsDataStore.Items<Settings>();
+            
+            var settings = from r in items
                            where r.Key == key
                            select r;
             List<Settings> currentSettings = settings.ToList<Settings>();
