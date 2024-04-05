@@ -13,7 +13,7 @@ namespace EPiCode.Relations.EditorDescriptors
             
             SelectionFactoryType = typeof(RuleSelectionFactory);
 
-            ClientEditingClass = "epi.cms.contentediting.editors.SelectionEditor";
+            ClientEditingClass = "epi-cms/contentediting/editors/SelectionEditor";
 
             base.ModifyMetadata(metadata, attributes);
 
