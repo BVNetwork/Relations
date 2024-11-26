@@ -7,6 +7,7 @@ using EPiServer.ServiceLocation;
 
 namespace EPiCode.Relations.Db.PageSearch
 {
+    [ServiceConfiguration(typeof(IPageSearch))]
     public class PageSearchFindPagesWithCriteria : IPageSearch
     {
         public IEnumerable<PageData> SearchRelations(int pageId, string searchKeyword, IEnumerable<string> pageTypeNames, PageReference hierarchyStart)
