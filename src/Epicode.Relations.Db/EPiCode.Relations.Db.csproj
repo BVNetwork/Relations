@@ -5,9 +5,9 @@
     <Company>Departementenes servicesenter</Company>
     <Product>EPiCode.Relations.Db</Product>
     <Copyright>Copyright © Departementenes servicesenter 2013</Copyright>
-    <AssemblyVersion>7.5.0</AssemblyVersion>
     <TargetFramework>net6.0</TargetFramework>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <Version>12.0.0-beta.7</Version>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Epicode.Relations\EPiCode.Relations.csproj" />

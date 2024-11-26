@@ -7,7 +7,7 @@
     <Product>EPiCode.Relations</Product>
     <Copyright>Copyright ©  2023</Copyright>
     <IsPackable>true</IsPackable>
-    <Version>12.0.0-beta.4</Version>
+    <Version>12.0.0-beta.7</Version>
   </PropertyGroup>
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -25,14 +25,6 @@
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.0" />
   </ItemGroup>
   <ItemGroup>
-<!--    <Content Update=".\module.config">-->
-<!--      <Pack>true</Pack>-->
-<!--      <PackagePath>content\modules\_protected\EPiCode.Relations;contentFiles\any\any\modules\_protected\EPiCode.Relations</PackagePath>-->
-<!--    </Content>-->
-<!--    <Content Include=".\Scripts/*.*">-->
-<!--        <Pack>true</Pack>-->
-<!--        <PackagePath>content\modules\_protected\EPiCode.Relations\12.0.0-alpha.5\scripts;contentFiles\any\any\modules\_protected\EPiCode.Relations\12.0.0-alpha.5\scripts</PackagePath>-->
-<!--    </Content>-->
     <Content Remove="module.config" />
     <None Include="module.config">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
@@ -41,12 +33,6 @@
     <None Include="packages.lock.json">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
-<!--    <Content Include=".\build\CopyModule.targets">-->
-<!--      <Pack>true</Pack>-->
-<!--      <PackageCopyToOutput>true</PackageCopyToOutput>-->
-<!--      <BuildAction>None</BuildAction>-->
-<!--      <PackagePath>build\net6.0\$(MSBuildProjectName).targets</PackagePath>-->
-<!--    </Content>-->
   </ItemGroup>
   <ItemGroup>
     <UpToDateCheckInput Remove="Views\Blocks\PageListRelationsBlock.cshtml" />
