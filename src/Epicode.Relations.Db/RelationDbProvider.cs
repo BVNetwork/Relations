@@ -280,7 +280,7 @@ namespace EPiCode.Relations.Db
             return relations;
         }
 
-        internal static void UpdateCache()
+        public static void UpdateCache()
         {
             UpdateLocalOnly();
             UpdateRemoteOnly();
