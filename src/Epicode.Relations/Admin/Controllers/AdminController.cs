@@ -338,7 +338,9 @@ public class AdminController : Controller
     public IActionResult SaveSettings(AdminSettingsViewModel settingsViewModel)
     {
         Core.Settings.SaveSetting("DefaultRelationProviderString", settingsViewModel.CurrentRelationProvider);
+        RelationProviderManager.Initialize();
         Core.Settings.SaveSetting("DefaultRuleProviderString", settingsViewModel.CurrentRuleProvider);
+        RuleProviderManager.Initialize();
         
         return RedirectToAction("Settings");
     }
