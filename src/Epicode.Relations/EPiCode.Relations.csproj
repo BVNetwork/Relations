@@ -38,4 +38,10 @@
   <ItemGroup>
     <UpToDateCheckInput Remove="Views\Blocks\PageListRelationsBlock.cshtml" />
   </ItemGroup>
+  <ItemGroup>
+    <None Remove="Resources\LanguageFiles\RelationsEN.xml" />
+    <EmbeddedResource Include="Resources\LanguageFiles\RelationsEN.xml" />
+    <None Remove="Resources\LanguageFiles\RelationsNO.xml" />
+    <EmbeddedResource Include="Resources\LanguageFiles\RelationsNO.xml" />
+  </ItemGroup>
 </Project>
