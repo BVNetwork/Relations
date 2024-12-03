@@ -14,6 +14,37 @@ To order, send an email to `info@bvnetwork.no` with the following information:
 	 	 
 EPiCode.Relations is licensed per EPiServer site. One license is required for each site that has the module installed. 
 
+## Installation ##
+Run the following command in the NuGet Package Manager Console for your web site:
+```
+install-package EPiCode.Relations
+```
+You need to add the Optimizely NuGet Feed to Visual Studio (see http://nuget.optimizely.com/en/Feed/)
+
+## Configuration ##
+
+Add the module in the Startup.cs in the ConfigureServices method. Below is an example
+
+``` 
+public void ConfigureServices(IServiceCollection services)
+{
+...
+    
+	services.AddRelations();
+
+...
+}
+```
+
+By default, users with the "CmsEditors" or "CmsAdmins" role will have access to the module. You may override this with your own authorization policy:
+
+``` 
+ services.AddRelations(policy =>
+            {
+                policy.RequireRole("MyRole");
+            });
+```
+
 ## Screenshots ##
 ![Shows admin setup for relations](https://github.com/BVNetwork/Relations/blob/master/doc/screenshots/adminmode.png)
 
