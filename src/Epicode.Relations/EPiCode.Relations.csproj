@@ -7,12 +7,11 @@
     <Product>EPiCode.Relations</Product>
     <Copyright>Copyright ©  2023</Copyright>
     <IsPackable>true</IsPackable>
-    <Version>12.0.0-beta.8</Version>
+    <Version>12.0.0</Version>
   </PropertyGroup>
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <OutputPath>bin\</OutputPath>
     <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
   </PropertyGroup>
