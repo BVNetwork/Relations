@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using EPiCode.Relations.Core;
+using EPiServer;
 using EPiServer.Core;
 using EPiServer.Shell.Services.Rest;
 
@@ -8,12 +9,19 @@ namespace EPiCode.Relations.Queries
     [RestStore("overview")]
     public class OverviewRest : RestControllerBase
     {
+        private readonly IContentLoader _contentLoader;
+
+        public OverviewRest(IContentLoader contentLoader)
+        {
+            _contentLoader = contentLoader;
+        }
+        
         public RestResult Get(int? id, ItemRange range)
         {
             if (id.HasValue)
             {
                 string result = "";
-                PageData currentPage = EPiServer.DataFactory.Instance.GetPage(new PageReference(id.Value));
+                PageData currentPage = _contentLoader.Get<PageData>(new PageReference(id.Value));
                 var pageId = currentPage.ContentLink.ID;
                 var _rules = new List<Rule>();
                 int cnt = 0;
@@ -29,7 +37,7 @@ namespace EPiCode.Relations.Queries
                         List<int> relations = RelationEngine.Instance.GetRelationPagesForPage(pageId, rule);
                         foreach (int pgid in relations)
                         {
-                            result += "- " + EPiServer.DataFactory.Instance.GetPage(new PageReference(pgid)).Name +
+                            result += "- " + _contentLoader.Get<PageData>(new PageReference(pgid)).Name +
                                       "<br/>";
                             cnt++;
                         }
@@ -43,7 +51,7 @@ namespace EPiCode.Relations.Queries
                     List<int> relations = RelationEngine.Instance.GetRelationPagesForPage(pageId, rule);
                     foreach (int pgid in relations)
                     {
-                        result += "- " + EPiServer.DataFactory.Instance.GetPage(new PageReference(pgid)).Name + "<br/>";
+                        result += "- " + _contentLoader.Get<PageData>(new PageReference(pgid)).Name + "<br/>";
                         cnt++;
                     }
                 }

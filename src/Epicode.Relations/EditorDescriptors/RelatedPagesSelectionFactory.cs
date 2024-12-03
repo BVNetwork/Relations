@@ -3,6 +3,8 @@ using System.Linq;
 using EPiServer.Shell.ObjectEditing;
 using EPiServer.Core;
 using EPiServer;
+using EPiServer.ServiceLocation;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace EPiCode.Relations.EditorDescriptors
 {
@@ -15,7 +17,7 @@ namespace EPiCode.Relations.EditorDescriptors
                 return new List<ISelectItem>();
             }
 
-            var contactPages = DataFactory.Instance.GetChildren(ContentReference.StartPage);
+            var contactPages = ServiceLocator.Current.GetService<IContentLoader>().GetChildren<PageData>(ContentReference.StartPage);
 
             return new List<SelectItem>(contactPages.Select(c => new SelectItem {Value = c.PageLink, Text = c.Name}));
         }

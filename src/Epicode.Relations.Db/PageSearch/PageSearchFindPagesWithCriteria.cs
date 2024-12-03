@@ -3,9 +3,11 @@ using System.Linq;
 using EPiServer;
 using EPiServer.Core;
 using EPiServer.Filters;
+using EPiServer.ServiceLocation;
 
 namespace EPiCode.Relations.Db.PageSearch
 {
+    [ServiceConfiguration(typeof(IPageSearch))]
     public class PageSearchFindPagesWithCriteria : IPageSearch
     {
         public IEnumerable<PageData> SearchRelations(int pageId, string searchKeyword, IEnumerable<string> pageTypeNames, PageReference hierarchyStart)
@@ -31,9 +33,9 @@ namespace EPiCode.Relations.Db.PageSearch
                 }
             }
 
-            PageDataCollection pages = DataFactory.Instance.FindPagesWithCriteria(hierarchyStart, pageTypeCriterias);
+            PageDataCollection pages = ServiceLocator.Current.GetInstance<IPageCriteriaQueryService>().FindPagesWithCriteria(hierarchyStart, pageTypeCriterias);
 
-            PageData rootPage = DataFactory.Instance.GetPage(hierarchyStart);
+            PageData rootPage = ServiceLocator.Current.GetInstance<IContentLoader>().Get<PageData>(hierarchyStart);
             if (pageTypeCollection.Contains(rootPage.PageTypeName) && !pages.Contains(rootPage))
                 pages.Add(rootPage);
 

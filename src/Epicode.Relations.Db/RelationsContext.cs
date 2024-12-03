@@ -1,12 +1,16 @@
 ﻿using System.Data.Entity;
+using System.Diagnostics;
 using EPiCode.Relations.Db.Data;
+using EPiServer.ServiceLocation;
+using Microsoft.Extensions.Configuration;
 
 namespace EPiCode.Relations.Db
 {
     public class RelationsContext : DbContext
     {
-        public RelationsContext(string connectonString) : base(connectonString)
+        public RelationsContext(string connectionString) : base(connectionString)
         {
+
         }
 
         public DbSet<Rule> Rules { get; set; }
@@ -26,13 +30,13 @@ namespace EPiCode.Relations.Db
                         .HasRequired(rpt => rpt.Rule)
                         .WithMany(r => r.PageTypeList)
                         .Map(m => m.MapKey("RuleId"));
-
         }
 
 
         public static RelationsContext CreateContext()
         {
-            return new RelationsContext(RelationsConfiguration.Instance.ConnectionStringName);
+            var connectionString = ServiceLocator.Current.GetInstance<IConfiguration>().GetConnectionString(RelationsConfiguration.Instance.ConnectionStringName);
+            return new RelationsContext(connectionString);
         }
     }
 }

@@ -1,0 +1,65 @@
+@using System.Web
+@model EPiCode.Relations.Admin.ViewModels.AdminViewModel
+
+
+
+<div>
+    <h2>Relations</h2>    
+</div>
+
+<div class="row">
+    @foreach (var rule in Model.Rules)
+    {
+        <div class="col-sm-6">
+            <div class="card border-primary mb-4">
+                <div class="card-header bg-primary text-white">
+                    <div class="card-title">
+                        <strong>@rule.RuleName</strong>
+                        <span>
+                            <a class="btn btn-light float-right btn-sm" href="admin/edit?ruleId=@rule.Id"><span class="glyphicon glyphicon-pencil"></span> Edit rule</a>
+                        </span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="card bg-default">
+                                <div class="card-header"><strong>@rule.RuleTextLeft</strong></div>
+                                <div class="card-body">
+                                    <strong>Page types:</strong><br>
+                                    @foreach(var pageType in HttpUtility.UrlDecode(rule.PageTypeLeft)?.Split(';') ?? Array.Empty<string>())
+                                    {
+                                        @pageType<br>
+                                    }
+                                    <br>
+                                    <strong>Root page:</strong><br>
+                                    @rule.RelationHierarchyStartLeft
+                                    <div class="clearfix"></div>
+                                    <br>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="card bg-default">
+                                <div class="card-header"><strong>@rule.RuleTextRight</strong></div>
+                                <div class="card-body">
+                                    <strong>Page types:</strong><br>
+                                    @foreach(var pageType in HttpUtility.UrlDecode(rule.PageTypeRight)?.Split(';') ?? Array.Empty<string>())
+                                    {
+                                        @pageType<br>
+                                    }
+                                    <br>
+                                    <strong>Root page:</strong><br>
+                                    @rule.RelationHierarchyStartRight
+                                    <div class="clearfix"></div>
+                                    <br>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

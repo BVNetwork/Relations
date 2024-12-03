@@ -1,0 +1,52 @@
+@model EPiCode.Relations.Admin.ViewModels.ValidatorViewModel
+
+
+<div class="card card-body bg-light mt-2">
+    
+    
+    <strong>Validate relations</strong><br/>
+    Check if all relations are legal according to the current set of rules.<br/><br/>
+
+    @using (Html.BeginForm(new { controller = "Admin", action = "Validate" }))
+    {
+        <div class="form-group col-sm-4">
+            <input type="submit" value="Validate" class="btn btn-success" />
+            <input type="submit" name="command" value="Remove all invalid" class="btn btn-danger" />
+        </div>
+    }
+    
+    <div>
+        @if (Model != null)
+        {
+            <div class="alert alert-warning">
+                @if (string.IsNullOrWhiteSpace(Model.Status) == false)
+                {
+                    <strong>@Model.Status</strong>
+                    <br/>
+                }
+                else if(Model.InvalidRelations.Any())
+                {
+                    @foreach (var relation in Model.InvalidRelations)
+                    {
+                        <strong>@relation.InvalidRelation.RuleName:</strong> <text>@relation.ContentNameLeft (ID = @relation.InvalidRelation.PageIDLeft) <text>&lt; - &gt;</text> @relation.ContentNameRight (ID = @relation.InvalidRelation.PageIDRight)</text>
+                        <br />
+                        @relation.Status 
+                        <br />
+                        @using (Html.BeginForm(new { controller = "Admin", action = "Validate" }))
+                        {
+                            <input type="hidden" name="id" value="@relation.InvalidRelation.Id" />
+                            <input type="submit" name="command" value="Delete" class="btn btn-danger btn-sm"/>
+                        }
+
+                        <br/><br />
+                    }
+                }
+                else
+                {
+                    <text>No invalid relations found.</text>
+                }
+            </div>
+        }
+    </div>
+    
+</div>

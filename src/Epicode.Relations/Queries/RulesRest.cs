@@ -2,6 +2,7 @@
 using System.Linq;
 using EPiCode.Relations.Core;
 using EPiCode.Relations.Helpers;
+using EPiServer;
 using EPiServer.Core;
 using EPiServer.Filters;
 using EPiServer.Security;
@@ -12,23 +13,30 @@ namespace EPiCode.Relations.Queries
     [RestStore("rules")]
     public class RulesRest : RestControllerBase
     {
+        private readonly IContentLoader _contentLoader;
+
+        public RulesRest(IContentLoader contentLoader)
+        {
+            _contentLoader = contentLoader;
+        }
+        
         public RestResult Get(int? id, ItemRange range)
         {
             if (id.HasValue)
             {
                 
-                if (new ContentReference(id.Value) != null && EPiServer.DataFactory.Instance.Get<IContent>(new ContentReference(id.Value)) as PageData != null)
+                if (_contentLoader.Get<IContent>(new ContentReference(id.Value)) as PageData != null)
                 {
-                    PageData currentPage = EPiServer.DataFactory.Instance.GetPage(new PageReference(id.Value));
+                    PageData currentPage = _contentLoader.Get<PageData>(new PageReference(id.Value));
                     var pageId = currentPage.ContentLink.ID;
-                    var _rules = new List<RuleDescription>();
+                    var rules = new List<RuleDescription>();
 
-                    List<Rule> _rulesLeft = RuleEngine.Instance.GetRulesLeft(pageId) as List<Rule>;
-                    List<Rule> _rulesRight = RuleEngine.Instance.GetRulesRight(pageId) as List<Rule>;
+                    List<Rule> rulesLeft = RuleEngine.Instance.GetRulesLeft(pageId) as List<Rule>;
+                    List<Rule> rulesRight = RuleEngine.Instance.GetRulesRight(pageId) as List<Rule>;
 
                     AccessControlList list = currentPage.ACL;
 
-                    foreach (Rule leftRule in _rulesLeft)
+                    foreach (Rule leftRule in rulesLeft)
                     {
                         var ruleSortOrder = GetRuleSortOrder(leftRule.SortOrderLeft);
 
@@ -43,10 +51,10 @@ namespace EPiCode.Relations.Queries
                         };
                         if (HasAccess(list, leftRule.EditModeAccessLevel) && 
                             leftRule.RuleVisibleLeft)
-                            _rules.Add(rd);
+                            rules.Add(rd);
                     }
 
-                    foreach (Rule rightRule in _rulesRight)
+                    foreach (Rule rightRule in rulesRight)
                     {
                         var ruleSortOrder = GetRuleSortOrder(rightRule.SortOrderRight);
 
@@ -64,11 +72,11 @@ namespace EPiCode.Relations.Queries
                             rightRule.RuleVisibleRight &&
                             rightRule.RuleTextLeft != rightRule.RuleTextRight)
                         {
-                            _rules.Add(rd);
+                            rules.Add(rd);
                         }
                     }
 
-                    return Rest(_rules.Select(m => new
+                    return Rest(rules.Select(m => new
                     {
                         Guid = m.RuleGuid, 
                         Name = TryTranslate( m.RuleName), 
@@ -84,7 +92,7 @@ namespace EPiCode.Relations.Queries
 
         private static string GetRuleSortOrder(int sortOrder)
         {            
-            var showSortOrder = ConfigurationHelper.GetAppSettingsConfigValueBool("Relations.ShowSortOrder", false);
+            var showSortOrder = ConfigurationHelper.GetAppSettingsConfigValueBool("Relations:ShowSortOrder", false);
 
             if (showSortOrder && (FilterSortOrder)sortOrder != FilterSortOrder.None)
             {

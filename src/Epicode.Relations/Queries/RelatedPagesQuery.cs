@@ -20,21 +20,14 @@ namespace EPiCode.Relations.Queries
         {
 
         }
-
-
+        
         /// <summary>        
         /// The key to trigger this query.        
         /// </summary>        
         public override string Name => "RelationsQuery";
-
-
+        
         protected override IEnumerable<IContent> GetContent(ContentQueryParameters parameters)
         {
-            if (HttpContext.Current.Session != null)
-            {
-                HttpContext.Current.Session["ValidationResult"] = "";
-            }
-
             bool isLeftRule = HttpUtility.HtmlDecode(parameters.AllParameters["direction"]) == "left";
             var relationPageLeft = HttpUtility.HtmlDecode(parameters.AllParameters["relationPageLeft"]);
             var relationRule = HttpUtility.HtmlDecode(parameters.AllParameters["relationRule"]);

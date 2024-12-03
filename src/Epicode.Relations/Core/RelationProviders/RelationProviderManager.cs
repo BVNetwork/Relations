@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Configuration.Provider;
 using System.Linq;
@@ -25,7 +24,7 @@ namespace EPiCode.Relations.Core.RelationProviders
 
         public static Type[] GetRelationProviders()
         {
-            var assemblyStartsWith = ConfigurationHelper.GetAppSettingsList("Relations.RelationProviderAssembliesStartsWith");
+            var assemblyStartsWith = ConfigurationHelper.GetAppSettingsList("Relations:ProviderAssembliesStartsWith");
 
             var type = typeof(RelationProviderBase);
             var types = AppDomain.CurrentDomain.GetAssemblies()
@@ -34,7 +33,6 @@ namespace EPiCode.Relations.Core.RelationProviders
                 .SelectMany(ass => ass.GetTypes())
                 .Where(p => type.IsAssignableFrom(p) && p != type);
             return types.ToArray<Type>();
-
         }
 
         public static RelationProviderBase Provider { 

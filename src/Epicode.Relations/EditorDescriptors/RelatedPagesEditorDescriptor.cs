@@ -13,8 +13,6 @@ namespace EPiCode.Relations.EditorDescriptors
             
             SelectionFactoryType = typeof(RelatedPagesSelectionFactory);
 
-            //ClientEditingClass = "alloy.RelationSelector";
-
             base.ModifyMetadata(metadata, attributes);
 
         }

@@ -1,11 +1,11 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26228.12
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EPiCode.Relations", "Epicode.Relations\EPiCode.Relations.csproj", "{07755379-5E84-43AC-8556-20ABDFC71BFF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EPiCode.Relations", "Epicode.Relations\EPiCode.Relations.csproj", "{07755379-5E84-43AC-8556-20ABDFC71BFF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EPiCode.Relations.Db", "Epicode.Relations.Db\EPiCode.Relations.Db.csproj", "{0A66F87C-D557-4A82-89A1-8B6764E14B07}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EPiCode.Relations.Db", "Epicode.Relations.Db\EPiCode.Relations.Db.csproj", "{0A66F87C-D557-4A82-89A1-8B6764E14B07}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,15 +1,26 @@
 ﻿using EPiServer;
 using System.Collections.Generic;
+using EPiServer.Core;
+using EPiServer.Framework;
+using EPiServer.Framework.Initialization;
 
 namespace EPiCode.Relations.Core
 {
-    public class PageEvents : EPiServer.PlugIn.PlugInAttribute
+    [InitializableModule]
+    [ModuleDependency(typeof(EPiServer.Web.InitializationModule))]
+    public class PageEventsInitialization : IInitializableModule
     {
-        public static void Start()
+        public void Initialize(InitializationEngine context)
         {
-            DataFactory.Instance.DeletedContent += Instance_DeletedContent;
+            var contentEvents = context.Locate.ContentEvents();
+            contentEvents.DeletedContent += Instance_DeletedContent;
         }
 
+        public void Uninitialize(InitializationEngine context)
+        {
+            
+        }
+        
         private static void Instance_DeletedContent(object sender, DeleteContentEventArgs e)
         {
             if (e.DeletedDescendents != null)

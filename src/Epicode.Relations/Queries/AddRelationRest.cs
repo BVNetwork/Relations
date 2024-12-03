@@ -3,6 +3,7 @@ using EPiCode.Relations.Core;
 using EPiCode.Relations.Helpers;
 using EPiServer.Core;
 using EPiServer.Shell.Services.Rest;
+using Microsoft.AspNetCore.Mvc;
 
 namespace EPiCode.Relations.Queries
 {
@@ -18,7 +19,7 @@ namespace EPiCode.Relations.Queries
             return Rest("Hello world!");
         }
 
-        public RestResult Post(string ruleName, string relationPageLeftString, string relationPageRightString, string ruleDirection)
+        public RestResult Post([FromBody] RelationRestStoreModel model)
         {
             int relationPageLeft = 0;
             int relationPageRight = 0;
@@ -28,11 +29,11 @@ namespace EPiCode.Relations.Queries
             //string[] newRelationValues = (newRelation.ToString()).Split(';');
             try
             {
-                relationRule = ruleName;
-                relationPageLeft = int.Parse(relationPageLeftString.Split('_')[0]);
+                relationRule = model.RuleName;
+                relationPageLeft = int.Parse(model.RelationPageLeftString.Split('_')[0]);
                 relationPageRight = EPiServer.Web.PermanentLinkUtility.FindContentReference(
-                    EPiServer.Web.PermanentLinkUtility.GetGuid(relationPageRightString)).ID;
-                isLeftRule = ruleDirection == "left";
+                    EPiServer.Web.PermanentLinkUtility.GetGuid(model.RelationPageRightString)).ID;
+                isLeftRule = model.RuleDirection == "left";
             }
             catch (Exception e)
             {
@@ -82,7 +83,13 @@ namespace EPiCode.Relations.Queries
 
             return Rest(TranslationHelper.Translate("/relations/edit/added"));
         }
-
-
+    }
+    
+    public class RelationRestStoreModel
+    {
+        public string RuleName { get; set; }
+        public string RelationPageLeftString { get; set; }
+        public string RelationPageRightString { get; set; }
+        public string RuleDirection { get; set; }
     }
 }

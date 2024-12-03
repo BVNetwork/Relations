@@ -8,8 +8,8 @@ namespace EPiCode.Relations.Core
     {
         public static PageDataCollection GetDescendents(int page, Rule rule, Relation relation)
         {
-            PageReference pr = new PageReference(GetRelatedPageID(relation, page));
-            PageData referencedPage = DataFactory.Instance.GetPage(pr);
+            var pr = new PageReference(GetRelatedPageID(relation, page));
+            var referencedPage = ServiceLocator.Current.GetInstance<IContentLoader>().Get<PageData>(pr);
             return RuleEngine.Instance.SearchRelations(rule, referencedPage.PageLink.ID, string.Empty, pr);
         }
 
@@ -20,11 +20,10 @@ namespace EPiCode.Relations.Core
 
         public static PageData GetPage(int page)
         {
-            ContentReference pageRef = new ContentReference(page);
+            var pageRef = new ContentReference(page);
             if (pageRef != ContentReference.EmptyReference)
             {
-                PageData pageData;
-                if (ServiceLocator.Current.GetInstance<IContentRepository>().TryGet(pageRef, out pageData))
+                if (ServiceLocator.Current.GetInstance<IContentRepository>().TryGet(pageRef, out PageData pageData))
                 {
                     return pageData;
                 }

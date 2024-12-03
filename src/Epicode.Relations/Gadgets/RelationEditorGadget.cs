@@ -18,8 +18,8 @@ namespace EPiCode.Relations.Gadgets
         {
             Heading = TranslationHelper.Translate("/relations/admin/relations",  "Relations");
             SortOrder = 10000;
-            Settings.Add("dblclick", ConfigurationHelper.GetAppSettingsConfigValueBool("Relations.EnableDoubleClick", false));
-            Settings.Add("useDynamicHeight", ConfigurationHelper.GetAppSettingsConfigValueBool("Relations.UseDynamicHeight", false));
+            Settings.Add("dblclick", ConfigurationHelper.GetAppSettingsConfigValueBool("Relations:EnableDoubleClick", false));
+            Settings.Add("useDynamicHeight", ConfigurationHelper.GetAppSettingsConfigValueBool("Relations:UseDynamicHeight", false));
         }
     }
 }
