@@ -1,16 +1,26 @@
 ﻿using EPiServer;
 using System.Collections.Generic;
+using EPiServer.Core;
+using EPiServer.Framework;
+using EPiServer.Framework.Initialization;
 
 namespace EPiCode.Relations.Core
 {
-    public class PageEvents : EPiServer.PlugIn.PlugInAttribute
+    [InitializableModule]
+    [ModuleDependency(typeof(EPiServer.Web.InitializationModule))]
+    public class PageEventsInitialization : IInitializableModule
     {
-        // TODO NETCORE: Check this
-        // public static void Start()
-        // {
-        //     DataFactory.Instance.DeletedContent += Instance_DeletedContent;
-        // }
+        public void Initialize(InitializationEngine context)
+        {
+            var contentEvents = context.Locate.ContentEvents();
+            contentEvents.DeletedContent += Instance_DeletedContent;
+        }
 
+        public void Uninitialize(InitializationEngine context)
+        {
+            
+        }
+        
         private static void Instance_DeletedContent(object sender, DeleteContentEventArgs e)
         {
             if (e.DeletedDescendents != null)
