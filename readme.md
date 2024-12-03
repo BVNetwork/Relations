@@ -19,7 +19,7 @@ Run the following command in the NuGet Package Manager Console for your web site
 ```
 install-package EPiCode.Relations
 ```
-You need to add the Optimizely NuGet Feed to Visual Studio (see http://nuget.optimizely.com/en/Feed/)
+You need to add the Optimizely NuGet Feed to Visual Studio (see http://nuget.optimizely.com/feed/)
 
 ## Configuration ##
 
