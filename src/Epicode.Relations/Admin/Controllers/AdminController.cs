@@ -3,17 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Web;
+using EPiCode.Relations.Admin.ViewModels;
 using EPiCode.Relations.Core;
 using EPiCode.Relations.Core.RelationProviders;
 using EPiServer.Data;
 using EPiServer.DataAbstraction;
 using EPiServer.Filters;
 using EPiServer.Security;
-using EPiServer.Shell;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.Mvc.Routing;
 using Validator = EPiCode.Relations.Core.Validator;
 
 namespace EPiCode.Relations.Admin.Controllers;
@@ -67,7 +66,7 @@ public class AdminController : Controller
             EditModeAccessLevel = rule.EditModeAccessLevel
         };
         
-        var model = new AdminEditViewModel()
+        var model = new AdminEditViewModel
         {
             RuleModel = ruleModel,
             NumberOfRelations = !string.IsNullOrEmpty(rule.RuleName) ? RelationEngine.Instance.GetRelationsCount(rule.RuleName) : 0,
@@ -137,9 +136,9 @@ public class AdminController : Controller
         if (command == "Export")
         {
             
-            List<Rule> rules = RuleEngine.Instance.GetAllRulesList();
-            StringBuilder sb = new StringBuilder();
-            foreach (Rule rule in rules)
+            var rules = RuleEngine.Instance.GetAllRulesList();
+            var sb = new StringBuilder();
+            foreach (var rule in rules)
             {
                 if (model.IncludeRules)
                 {
@@ -159,11 +158,12 @@ public class AdminController : Controller
                     sb.Append(rule.SortOrderRight + ";");
                     sb.Append("\n");
                 }
+                
                 if (model.IncludeRelations)
                 {
-                    List<Relation> relations = RelationEngine.Instance.GetAllRelations(rule.RuleName);
-                    int relationCount = 0;
-                    foreach (Relation relation in relations)
+                    var relations = RelationEngine.Instance.GetAllRelations(rule.RuleName);
+                    
+                    foreach (var relation in relations)
                     {
                         sb.Append("Relation;");
                         sb.Append(relation.RuleName + ";");
@@ -171,11 +171,8 @@ public class AdminController : Controller
                         sb.Append(relation.PageIDRight + ";");
                         sb.Append(relation.LanguageBranch+";");
                         sb.Append("\n");
-                        relationCount++;
                     }
-                    // Status("Exported " + relationCount.ToString() + " relations of rule " + rule.RuleName);
                 }
-
             }
 
             model.Export = sb.ToString();
@@ -184,16 +181,18 @@ public class AdminController : Controller
         {
             // import
             var status = "";
-            int rulesImported = 0;
-            int rulesNotImported = 0;
-            int relationsImported = 0;
-            int relationsNotImported = 0;
+            var rulesImported = 0;
+            var rulesNotImported = 0;
+            var relationsImported = 0;
+            var relationsNotImported = 0;
+            
             if (!string.IsNullOrWhiteSpace(textArea))
             {
                 string[] rows = textArea.Split('\n');
                 if (rows.Length > 0) {
-                    //Status("Found " + rows.Length.ToString() + " items to import.");
-                    foreach (string row in rows) {
+                    
+                    foreach (string row in rows) 
+                    {
                         if (!string.IsNullOrEmpty(row))
                         {
                             string[] columns = row.Split(';');
@@ -219,19 +218,13 @@ public class AdminController : Controller
                                     else
                                         relationsImported++;
                                 }
-                                    
                             }
-                        }
-                        else
-                        {
-                            //Status("No data in row");
                         }
                     }
                     
                     model.Status = $"Rules imported: {rulesImported} / {(rulesImported + rulesNotImported)}<br />";
                     model.Status += $"Relations imported: {relationsImported} / {(relationsImported + relationsNotImported)}<br />";
                 }
-
             }
             else
             {
@@ -241,79 +234,76 @@ public class AdminController : Controller
         
         return View("~/EpiCode.Relations.Views/Views/Admin/ImportExport.cshtml", model);
     }
-    
-    protected string ImportRule(string[] row)
+
+    private string ImportRule(string[] row)
+    {
+        try
         {
-            try
-            {
-                string name = row[1];
-
-                //int left = int.Parse(row[1]);
-                //int right = int.Parse(row[2]);
-                string pageTypeLeft = row[3];
-                string pageTypeRight = row[4];
-                int relationHierarchyStartLeft = int.Parse(row[5]);
-                int relationHierarchyStartRight = int.Parse(row[6]);
-                string ruleTextLeft = row[7];
-                string ruleTextRight = row[8];
-                bool ruleVisibleLeft = bool.Parse(row[9]);
-                bool ruleVisibleRight = bool.Parse(row[10]);
-                string ruleEditModeAccessLevel = row[11];
-                int ruleSortOrderLeft = int.Parse(row[12]);
-                int ruleSortOrderRight = int.Parse(row[13]);
-
-                Rule newRule;
-                if (RuleEngine.Instance.RuleExists(name))
-                {
-                    newRule = RuleEngine.Instance.GetRule(name);
-                    //Status("Updating existing rule: " + name);
-                }
-                else
-                {
-                    newRule = RuleEngine.Instance.AddNewRule(name, pageTypeLeft, pageTypeRight, ruleTextLeft, ruleTextRight);
-                    //Status("Adding new rule: " + name);
-                }
-                newRule.PageTypeLeft = pageTypeLeft;
-                newRule.PageTypeRight = pageTypeRight;
-                newRule.RelationHierarchyStartLeft = relationHierarchyStartLeft;
-                newRule.RelationHierarchyStartRight = relationHierarchyStartRight;
-                newRule.RuleTextLeft = ruleTextLeft;
-                newRule.RuleTextRight = ruleTextRight;
-                newRule.RuleVisibleLeft = ruleVisibleLeft;
-                newRule.RuleVisibleRight = ruleVisibleRight;
-                newRule.EditModeAccessLevel = ruleEditModeAccessLevel;
-                newRule.SortOrderLeft = ruleSortOrderLeft;
-                newRule.SortOrderRight = ruleSortOrderRight;
-
-                RuleEngine.Instance.Save(newRule);
-                return string.Empty;
-            }
-            catch (Exception e){
-                return "Something went wrong: " + e.Message;
-            }
-            //Validator.ValidationResult validation = Validator.Validate(name, left, right);
-            //if (validation == Validator.ValidationResult.Ok)
-            //{
-            //    RelationEngine.AddRelation(name, left, right);
-            //    return string.Empty;
-            //}
-        }
-
-
-        protected string ImportRelation(string[] row) {
             string name = row[1];
-            int left = int.Parse(row[2]);
-            int right = int.Parse(row[3]);
 
-            Validator.ValidationResult validation =  Validator.Validate(name, left, right);
-            if (validation == Validator.ValidationResult.Ok)
+            //int left = int.Parse(row[1]);
+            //int right = int.Parse(row[2]);
+            string pageTypeLeft = row[3];
+            string pageTypeRight = row[4];
+            int relationHierarchyStartLeft = int.Parse(row[5]);
+            int relationHierarchyStartRight = int.Parse(row[6]);
+            string ruleTextLeft = row[7];
+            string ruleTextRight = row[8];
+            bool ruleVisibleLeft = bool.Parse(row[9]);
+            bool ruleVisibleRight = bool.Parse(row[10]);
+            string ruleEditModeAccessLevel = row[11];
+            int ruleSortOrderLeft = int.Parse(row[12]);
+            int ruleSortOrderRight = int.Parse(row[13]);
+
+            Rule newRule;
+            if (RuleEngine.Instance.RuleExists(name))
             {
-                RelationEngine.Instance.AddRelation(name, left, right);
-                return string.Empty;
+                newRule = RuleEngine.Instance.GetRule(name);
             }
-            return ("Could not import relation: " + validation.ToString());
+            else
+            {
+                newRule = RuleEngine.Instance.AddNewRule(name, pageTypeLeft, pageTypeRight, ruleTextLeft, ruleTextRight);
+            }
+
+            newRule.PageTypeLeft = pageTypeLeft;
+            newRule.PageTypeRight = pageTypeRight;
+            newRule.RelationHierarchyStartLeft = relationHierarchyStartLeft;
+            newRule.RelationHierarchyStartRight = relationHierarchyStartRight;
+            newRule.RuleTextLeft = ruleTextLeft;
+            newRule.RuleTextRight = ruleTextRight;
+            newRule.RuleVisibleLeft = ruleVisibleLeft;
+            newRule.RuleVisibleRight = ruleVisibleRight;
+            newRule.EditModeAccessLevel = ruleEditModeAccessLevel;
+            newRule.SortOrderLeft = ruleSortOrderLeft;
+            newRule.SortOrderRight = ruleSortOrderRight;
+
+            RuleEngine.Instance.Save(newRule);
+            
+            return string.Empty;
         }
-    
+        catch (Exception e)
+        {
+            return "Something went wrong: " + e.Message;
+        }
+    }
+
+
+    private static string ImportRelation(string[] row)
+    {
+        string name = row[1];
+        int left = int.Parse(row[2]);
+        int right = int.Parse(row[3]);
+
+        Validator.ValidationResult validation = Validator.Validate(name, left, right);
+        if (validation == Validator.ValidationResult.Ok)
+        {
+            RelationEngine.Instance.AddRelation(name, left, right);
+            return string.Empty;
+        }
+
+        return "Could not import relation: " + validation;
+    }
+
     [HttpGet]
     [ModuleRoute("Admin", "Settings")]
     public IActionResult Settings()
@@ -325,11 +315,22 @@ public class AdminController : Controller
         {
             CurrentRelationProvider = Core.Settings.GetSettingValue("DefaultRelationProviderString"),
             CurrentRuleProvider = Core.Settings.GetSettingValue("DefaultRuleProviderString"),
-            RelationProviders = relationProviders.Select(t => new SelectListItem(t.Name, $"{t.FullName}, {t.Assembly.FullName.Substring(0, t.Assembly.FullName.IndexOf(','))}")),
-            RuleProviders = ruleProviders.Select(t => new SelectListItem(t.Name, $"{t.FullName}, {t.Assembly.FullName.Substring(0, t.Assembly.FullName.IndexOf(','))}"))
+            RelationProviders = CreateSelectList(relationProviders),
+            RuleProviders = CreateSelectList(ruleProviders)
         };
         
         return View("~/EpiCode.Relations.Views/Views/Admin/Settings.cshtml", model);
+    }
+    
+    private IEnumerable<SelectListItem> CreateSelectList(IEnumerable<Type> types)
+    {
+        foreach (var type in types)
+        {
+            if (type.Assembly.FullName != null)
+            {
+                yield return new SelectListItem(type.Name, $"{type.FullName}, {type.Assembly.FullName.Substring(0, type.Assembly.FullName.IndexOf(','))}");
+            }
+        }
     }
     
     [HttpPost]
@@ -406,38 +407,5 @@ public class AdminController : Controller
         }
         
         return $"Removed {cnt} invalid relations";
-    }
-}
-
-public class AdminImportExportModel
-{
-    public string Export { get; set; }
-    public string Status { get; set; }
-    public bool IncludeRules { get; set; }
-    public bool IncludeRelations { get; set; }
-}
-
-public class AdminSettingsViewModel
-{
-    public string CurrentRelationProvider { get; set; }
-    public string CurrentRuleProvider { get; set; }
-    public IEnumerable<SelectListItem> RelationProviders { get; set; }
-    public IEnumerable<SelectListItem> RuleProviders { get; set; }
-}
-
-[AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = true)]
-public class ModuleRoute : Attribute, IRouteTemplateProvider
-{
-    private readonly string _controllerName;
-    private readonly string _actionName;
-
-    public string Template => Paths.ToResource(typeof(ModuleRoute), $"{_controllerName}/{_actionName}");
-    public int? Order { get; set; } = 0;
-    public string Name { get; set; }
-
-    public ModuleRoute(string controllerName, string actionName)
-    {
-        _controllerName = controllerName;
-        _actionName = actionName;
     }
 }
