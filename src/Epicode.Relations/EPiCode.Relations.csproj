@@ -7,7 +7,7 @@
     <Product>EPiCode.Relations</Product>
     <Copyright>Copyright ©  2023</Copyright>
     <IsPackable>true</IsPackable>
-    <Version>12.0.0-beta.7</Version>
+    <Version>12.0.0-beta.8</Version>
   </PropertyGroup>
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -23,6 +23,7 @@
     <PackageReference Include="EPiServer.CMS.UI.Core" Version="[12.4.0, 13)" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.0" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="6.0.4" />
   </ItemGroup>
   <ItemGroup>
     <Content Remove="module.config" />

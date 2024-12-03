@@ -28,6 +28,15 @@
           "System.Security.Cryptography.ProtectedData": "8.0.0"
         }
       },
+      "System.Security.Cryptography.Pkcs": {
+        "type": "Direct",
+        "requested": "[6.0.4, )",
+        "resolved": "6.0.4",
+        "contentHash": "LGbXi1oUJ9QgCNGXRO9ndzBL/GZgANcsURpMhNR8uO+rca47SZmciS3RSQUvlQRwK3QHZSHNOXzoMUASKA+Anw==",
+        "dependencies": {
+          "System.Formats.Asn1": "6.0.0"
+        }
+      },
       "Azure.Core": {
         "type": "Transitive",
         "resolved": "1.6.0",
@@ -1311,14 +1320,6 @@
           "System.Security.Cryptography.Primitives": "4.3.0",
           "System.Text.Encoding": "4.3.0",
           "runtime.native.System.Security.Cryptography.OpenSsl": "4.3.0"
-        }
-      },
-      "System.Security.Cryptography.Pkcs": {
-        "type": "Transitive",
-        "resolved": "6.0.0",
-        "contentHash": "elM3x+xSRhzQysiqo85SbidJJ2YbZlnvmh+53TuSZHsD7dNuuEWser+9EFtY+rYupBwkq2avc6ZCO3/6qACgmg==",
-        "dependencies": {
-          "System.Formats.Asn1": "6.0.0"
         }
       },
       "System.Security.Cryptography.Primitives": {

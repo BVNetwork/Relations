@@ -136,7 +136,6 @@ public class AdminController : Controller
         
         if (command == "Export")
         {
-            var statusText = "";
             
             List<Rule> rules = RuleEngine.Instance.GetAllRulesList();
             StringBuilder sb = new StringBuilder();
