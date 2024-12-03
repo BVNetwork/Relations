@@ -9,7 +9,7 @@ namespace EPiCode.Relations.Infrastructure;
 
 public static class ServiceCollectionExtensions
 {
-    private static readonly Action<AuthorizationPolicyBuilder> DefaultPolicy = p => p.RequireRole(Roles.WebAdmins);
+    private static readonly Action<AuthorizationPolicyBuilder> DefaultPolicy = p => p.RequireRole(Roles.CmsEditors, Roles.CmsAdmins);
 
     public static IServiceCollection AddRelations(
         this IServiceCollection services)
