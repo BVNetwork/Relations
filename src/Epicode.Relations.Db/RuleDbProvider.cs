@@ -384,6 +384,7 @@ namespace EPiCode.Relations.Db
                 // Try to get page
                 PageData pageData;              
                 if (ServiceLocator.Current.GetInstance<IContentLoader>().TryGet(new ContentReference(searchPageId), out pageData) &&
+                    pageData.IsDeleted == false &&
                     rule.IsLegalPageType(pageData.PageTypeName, !isLeftRule))
                 {                   
                     pages.Add(pageData);
