@@ -7,7 +7,8 @@
     <Product>EPiCode.Relations</Product>
     <Copyright>Copyright ©  2023</Copyright>
     <IsPackable>true</IsPackable>
-    <Version>12.0.0</Version>
+    <PackageId>Epicode.Relations</PackageId>
+    <Version>12.0.1</Version>
   </PropertyGroup>
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>

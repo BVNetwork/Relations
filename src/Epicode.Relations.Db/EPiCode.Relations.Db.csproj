@@ -6,7 +6,8 @@
     <Product>EPiCode.Relations.Db</Product>
     <Copyright>Copyright © Departementenes servicesenter 2013</Copyright>
     <TargetFramework>net6.0</TargetFramework>
-    <Version>12.0.0</Version>
+    <PackageId>Epicode.Relations.Db.Provider</PackageId>
+    <Version>12.0.1</Version>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Epicode.Relations\EPiCode.Relations.csproj" />
