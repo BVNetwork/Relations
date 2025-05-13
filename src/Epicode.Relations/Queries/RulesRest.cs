@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using EPiCode.Relations.Core;
 using EPiCode.Relations.Helpers;
@@ -19,39 +20,41 @@ namespace EPiCode.Relations.Queries
         {
             _contentLoader = contentLoader;
         }
-        
-        public RestResult Get(int? id, ItemRange range)
+
+        public RestResult Get(string id)
         {
-            if (id.HasValue)
+            var rules = new List<RuleDescription>();
+
+            if (string.IsNullOrWhiteSpace(id) == false)
             {
-                
-                if (_contentLoader.Get<IContent>(new ContentReference(id.Value)) as PageData != null)
+                var contentReference = new ContentReference(id).ToReferenceWithoutVersion();
+                if (_contentLoader.TryGet(contentReference, out PageData currentPage))
                 {
-                    PageData currentPage = _contentLoader.Get<PageData>(new PageReference(id.Value));
-                    var pageId = currentPage.ContentLink.ID;
-                    var rules = new List<RuleDescription>();
+                    var pageId = contentReference.ID;
 
-                    List<Rule> rulesLeft = RuleEngine.Instance.GetRulesLeft(pageId) as List<Rule>;
-                    List<Rule> rulesRight = RuleEngine.Instance.GetRulesRight(pageId) as List<Rule>;
+                    var rulesLeft = RuleEngine.Instance.GetRulesLeft(pageId).ToList();
+                    var rulesRight = RuleEngine.Instance.GetRulesRight(pageId).ToList();
 
-                    AccessControlList list = currentPage.ACL;
+                    var list = currentPage.ACL;
 
-                    foreach (Rule leftRule in rulesLeft)
+                    foreach (var leftRule in rulesLeft)
                     {
                         var ruleSortOrder = GetRuleSortOrder(leftRule.SortOrderLeft);
 
                         RuleDescription rd = new RuleDescription
                         {
-                            RuleName = leftRule.RuleTextLeft, 
+                            RuleName = leftRule.RuleTextLeft,
                             RuleDesc = leftRule.RuleDescriptionLeft,
                             RuleSortOrder = ruleSortOrder,
-                            RuleDirection = "left", 
-                            RuleGuid = leftRule.Id.ExternalId.ToString(), 
+                            RuleDirection = "left",
+                            RuleGuid = leftRule.Id.ExternalId.ToString(),
                             RuleId = leftRule.RuleName
                         };
-                        if (HasAccess(list, leftRule.EditModeAccessLevel) && 
-                            leftRule.RuleVisibleLeft)
+
+                        if (HasAccess(list, leftRule.EditModeAccessLevel) && leftRule.RuleVisibleLeft)
+                        {
                             rules.Add(rd);
+                        }
                     }
 
                     foreach (Rule rightRule in rulesRight)
@@ -60,34 +63,39 @@ namespace EPiCode.Relations.Queries
 
                         RuleDescription rd = new RuleDescription
                         {
-                            RuleName = rightRule.RuleTextRight, 
+                            RuleName = rightRule.RuleTextRight,
                             RuleDesc = rightRule.RuleDescriptionRight,
-                            RuleSortOrder =  ruleSortOrder,
-                            RuleDirection = "right", 
-                            RuleGuid = rightRule.Id.ExternalId.ToString(), 
+                            RuleSortOrder = ruleSortOrder,
+                            RuleDirection = "right",
+                            RuleGuid = rightRule.Id.ExternalId.ToString(),
                             RuleId = rightRule.RuleName
                         };
 
-                        if (HasAccess(list, rightRule.EditModeAccessLevel) && 
+                        if (HasAccess(list, rightRule.EditModeAccessLevel) &&
                             rightRule.RuleVisibleRight &&
                             rightRule.RuleTextLeft != rightRule.RuleTextRight)
                         {
                             rules.Add(rd);
                         }
                     }
-
-                    return Rest(rules.Select(m => new
-                    {
-                        Guid = m.RuleGuid, 
-                        Name = TryTranslate( m.RuleName), 
-                        Id = m.RuleId, 
-                        Description = TryTranslate(m.RuleDesc), 
-                        Direction = m.RuleDirection,
-                        SortOrder = m.RuleSortOrder
-                    }));
                 }
             }
-            return null;
+
+            return Rest(
+                new
+                {
+                    Rules = rules.Select(m => new
+                    {
+                        Guid = m.RuleGuid,
+                        Name = TryTranslate(m.RuleName),
+                        Id = m.RuleId,
+                        Description = TryTranslate(m.RuleDesc),
+                        Direction = m.RuleDirection,
+                        SortOrder = m.RuleSortOrder
+                    }),
+                    Id = id,
+                    rules.Count
+                });
         }
 
         private static string GetRuleSortOrder(int sortOrder)
@@ -104,18 +112,21 @@ namespace EPiCode.Relations.Queries
 
         private bool HasAccess(AccessControlList list, string editModeAccessLevel)
         {
-            AccessLevel al;
-            if (AccessLevel.TryParse(editModeAccessLevel, true, out al))
+            if (Enum.TryParse(editModeAccessLevel, true, out AccessLevel al))
+            {
                 return list.QueryDistinctAccess(al);
+            }
+                
             return true;
-
         }
 
         private string TryTranslate(string ruleName)
         {
-            string result = TranslationHelper.Translate("/relations/rules/" + ruleName);
+            var result = TranslationHelper.Translate("/relations/rules/" + ruleName);
             if (string.IsNullOrEmpty(result) || result.StartsWith("["))
+            {
                 result = ruleName;
+            }
             return result;
         }
 

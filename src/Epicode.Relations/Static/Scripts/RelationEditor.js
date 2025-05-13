@@ -54,7 +54,7 @@ dependency
             ignoreContextChange: false,
 
             templateString: '<div >\
-                            <div class="epi-gadgetInnerToolbar" data-dojo-attach-point="toolbar"><div data-dojo-attach-point="contentName"></div></div>\
+                            <div class="epi-gadgetInnerToolbar relations-toolbar" data-dojo-attach-point="toolbar"><div data-dojo-attach-point="contentName"></div></div>\
                             <div style="background-color: #ddd;" >\
                             <div data-dojo-attach-point="relationsArea"  >\
                                 <div class="relationsArea" id="relationsArea" style="background-color: #fff;" >\
@@ -168,10 +168,10 @@ dependency
                 mycache["this"] = this;
                 html.set(this.statusText, "Drag and drop content to create relations!");
                 dojo.query('.rulebutton', this.contentName).style({ display: "none", fontWeight: "normal" });
-                dojo.when(mycache["stuff"] || this.rulestore.get(this.currentContext.id.split("_", 1000000)[0]), function (returnValue) {
+                dojo.when(mycache["stuff"] || this.rulestore.get(this.currentContext.id), function (returnValue) {
                     mycache["stuff"] = returnValue;
                     var found = false;
-                    returnValue.forEach(function (rule) {
+                    returnValue.rules.forEach(function (rule) {
                         mycache["this"].createButton(rule.id, rule.name, rule.description, rule.direction, rule.sortOrder, mycache["this"], rule.guid);
                         if (mycache["this"].currentRule == rule.id && mycache["this"].currentDirection == rule.direction) {
                             found = true;
@@ -202,8 +202,8 @@ dependency
 
             enableButtons: function (evt, from, sender) {
                 fx.fadeIn({ node: from.relationsArea, duration: 500 }).play();
-                dojo.query('.dijitButtonContents', this.contentName).style({ opacity: 0.7, color: "#000" });
-                dojo.query('#' + evt.id, this.contentName).style({ opacity: 1, color: "#428bca" });
+                dojo.query('.relations-toolbar .dijitButtonContents', this.contentName).style({ opacity: 0.9, color: "#000" });
+                dojo.query('#' + evt.id, this.contentName).style({ opacity: 1, color: "#0037FF" });
                 from.switchRule(evt.rule, evt.ruledescription, evt.ruledirection, evt.sortorder);
             },
 
@@ -225,7 +225,6 @@ dependency
                 var contextService = epi.dependency.resolve("epi.shell.ContextService");
                 this.currentContext = contextService.currentContext;
                 this._reloadAllRelatedQueries();
-
             },
 
             _onDropDataAdd: function (dndData, source, nodes, copy) {
