@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Linq;
 using EPiCode.Relations.Core;
 using EPiCode.Relations.Core.RelationProviders;
@@ -11,7 +10,6 @@ using EPiServer;
 using EPiServer.Data;
 using EPiServer.Framework.Cache;
 using EPiServer.ServiceLocation;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 
 namespace EPiCode.Relations.Db
@@ -27,7 +25,14 @@ namespace EPiCode.Relations.Db
 
         public override void AddRelation(string rule, int pageLeft, int pageRight)
         {           
-            var relation = new Relation {PageIDLeft = pageLeft, PageIDRight = pageRight, RuleName = rule};
+            var relation = new Relation
+            {
+                PageIDLeft = pageLeft,
+                PageIDRight = pageRight,
+                RuleName = rule
+            };
+
+            Relation translatedRelation;
 
             var newRelation = _entityMapperTranslator.Translate<Data.Relation>(relation);
 
@@ -35,11 +40,13 @@ namespace EPiCode.Relations.Db
             {
                 ctx.Relations.Add(newRelation);
                 ctx.SaveChanges();
-
-                var e = new RelationEventArgs { CurrentRelation = _entityMapperTranslator.Translate<Relation>(newRelation) };
-                UpdateCache();
-                RaiseOnAddedRelation(e);                
+                
+                translatedRelation = _entityMapperTranslator.Translate<Relation>(newRelation);
             }
+
+            var e = new RelationEventArgs { CurrentRelation = translatedRelation };
+            UpdateCache();
+            RaiseOnAddedRelation(e);
         }
 
         public override void Save(Relation relation)
@@ -74,14 +81,23 @@ namespace EPiCode.Relations.Db
 
         public override void DeleteRelation(Relation relation)
         {
+            Relation translated = null;
+
             using (var ctx = GetContext())
             {
                 var relationToDelete = ctx.Relations.FirstOrDefault(o => o.RelationId == relation.Id.ExternalId);
-                ctx.Relations.Remove(relationToDelete);
-                ctx.SaveChanges();
+                if (relationToDelete != null)
+                {
+                    ctx.Relations.Remove(relationToDelete);
+                    ctx.SaveChanges();
 
-                var e = new RelationEventArgs { CurrentRelation = _entityMapperTranslator.Translate<Relation>(relationToDelete) };
-                
+                    translated = _entityMapperTranslator.Translate<Relation>(relationToDelete);
+                }
+            }
+
+            if (translated != null)
+            {
+                var e = new RelationEventArgs { CurrentRelation = translated };
                 UpdateCache();
                 RaiseOnDeletedRelation(e);
             }
@@ -106,13 +122,13 @@ namespace EPiCode.Relations.Db
                     .Count(p => p.RuleName == rule);
             }
         }
-
-
+        
         public override List<Relation> GetRelationsForPage(int pageId, Rule rule)
         {
-            var timer = new Timer(string.Format("GetRelationsForPage (*) pageId={0}, rule name={1}", pageId, rule.RuleName));
+            var timer = new Timer($"GetRelationsForPage (*) pageId={pageId}, rule name={rule.RuleName}");
 
-            var relations = GetRelationsForPage(pageId).Where(rel => rel.RuleName == rule.RuleName && (rel.PageIDLeft == pageId || rel.PageIDRight == pageId))
+            var relations = GetRelationsForPage(pageId)
+                .Where(rel => rel.RuleName == rule.RuleName && (rel.PageIDLeft == pageId || rel.PageIDRight == pageId))
                                                         .ToList();
             timer.Stop();
 
@@ -123,7 +139,7 @@ namespace EPiCode.Relations.Db
         {
             var relations = new List<Relation>();
 
-            var timer = new Timer(string.Format("GetRelationsForPage (*) pageId={0}, rule name={1}, direction={2}", pageId, rule.RuleName, direction));
+            var timer = new Timer($"GetRelationsForPage (*) pageId={pageId}, rule name={rule.RuleName}, direction={direction}");
             switch (direction)
             {
                 case Rule.Direction.Both:
@@ -138,11 +154,11 @@ namespace EPiCode.Relations.Db
                                                            .ToList();
                     break;
             }
+            
             timer.Stop();
 
             return relations;
         }
-
 
         public override List<Relation> GetRelationsForPage(int pageId)
         {
@@ -153,7 +169,7 @@ namespace EPiCode.Relations.Db
                 return relations;
 
 
-            var timer = new Timer(string.Format("GetRelationsForPage pageId={0}", pageId));
+            var timer = new Timer($"GetRelationsForPage pageId={pageId}");
 
             using (var ctx = GetContext())
             {
@@ -170,7 +186,6 @@ namespace EPiCode.Relations.Db
 
             return relations;
         }
-
 
         public override List<int> GetRelationPagesForPage(int pageId, Rule rule)
         {
@@ -192,9 +207,7 @@ namespace EPiCode.Relations.Db
             }
             return secondaryRelations.ToList();
         }
-
-
-
+        
         public override List<Relation> GetAllRelations(string rule)
         {
             using (var ctx = GetContext())
@@ -217,7 +230,6 @@ namespace EPiCode.Relations.Db
         {
             throw new NotImplementedException();
         }
-
 
         #region Caching
         private const string DebugCategory = "RelationsCacheBase";
