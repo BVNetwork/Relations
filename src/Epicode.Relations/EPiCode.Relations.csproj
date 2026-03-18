@@ -8,7 +8,7 @@
     <Copyright>Copyright ©  2023</Copyright>
     <IsPackable>true</IsPackable>
     <PackageId>Epicode.Relations</PackageId>
-    <Version>12.0.2</Version>
+    <Version>12.0.3</Version>
   </PropertyGroup>
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>

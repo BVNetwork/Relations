@@ -1,6 +1,7 @@
 ﻿using System;
 using EPiCode.Relations.Db.PageSearch;
 using EPiServer.ServiceLocation;
+using Microsoft.Extensions.Options;
 
 namespace EPiCode.Relations.Db
 {
@@ -8,9 +9,13 @@ namespace EPiCode.Relations.Db
     {
         public string ConnectionStringName => "EPiServerDB";
 
-        public bool RemoveDeletedPageTypesFromRules => true;
+        public bool RemoveDeletedPageTypesFromRules =>
+            !ServiceLocator.Current.TryGetExistingInstance<IOptions<RelationsDbOptions>>(out var opts) 
+            || opts.Value.RemoveDeletedPageTypesFromRules;
 
-        public bool AutomaticMigrationsEnabled => true;
+        public bool AutomaticMigrationsEnabled =>
+            !ServiceLocator.Current.TryGetExistingInstance<IOptions<RelationsDbOptions>>(out var opts) 
+            || opts.Value.AutomaticMigrationsEnabled;
 
         public IPageSearch PageSearch => ServiceLocator.Current.GetInstance<IPageSearch>();
 
